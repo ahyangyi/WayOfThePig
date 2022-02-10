@@ -13,6 +13,9 @@ pub struct Game<K: kingdom::Kingdom> {
     village: u32,
 
     kingdom: PhantomData<K>,
+    decks: [Vec<u32>; 2],
+    discards: [Vec<u32>; 2],
+    trash: Vec<u32>,
 }
 
 impl<K: kingdom::Kingdom> Game<K> {
@@ -28,6 +31,9 @@ impl<K: kingdom::Kingdom> Game<K> {
             curse: 10,
             village: 10,
             kingdom: PhantomData,
+            decks: [vec![], vec![]],
+            discards: [vec![], vec![]],
+            trash: vec![],
         }
     }
     fn run(&self) {
