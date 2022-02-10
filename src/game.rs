@@ -6,4 +6,6 @@ pub struct Game {
     silver: u32;
     copper: u32;
     curse: u32;
+
+    village: u32;
 }
