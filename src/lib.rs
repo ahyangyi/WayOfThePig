@@ -1,3 +1,2 @@
-pub mod game {
-    pub struct Game;
-}
+pub mod game;
+pub mod kingdom;
