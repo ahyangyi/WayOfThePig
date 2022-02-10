@@ -16,14 +16,15 @@ pub struct Game<K: kingdom::Kingdom> {
 }
 
 impl<K: kingdom::Kingdom> Game<K> {
-    pub fn make() -> Game<K> {
+    pub fn make(n: u32) -> Game<K> {
+        let green_count = if n > 2 {12} else {8};
         Game {
-            province: 8,
-            duchy: 8,
-            estates: 8,
-            gold: 8,
-            silver: 8,
-            copper: 8,
+            province: green_count,
+            duchy: green_count,
+            estates: green_count,
+            gold: 30,
+            silver: 40,
+            copper: 46,
             curse: 10,
             village: 10,
             kingdom: PhantomData,
