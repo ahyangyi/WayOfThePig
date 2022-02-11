@@ -90,7 +90,7 @@ impl<K: kingdom::Kingdom> Game<K> {
     }
 
     pub fn run(&mut self) -> u32 {
-        for card in 1..5 {
+        for card in 0..5 {
             self.players[0].draw();
             self.players[1].draw();
         }
