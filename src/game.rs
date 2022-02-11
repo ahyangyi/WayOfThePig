@@ -28,9 +28,42 @@ pub struct Game<K: kingdom::Kingdom> {
     village: u32,
 
     kingdom: PhantomData<K>,
-    decks: [Vec<CardType>; 2],
-    discards: [Vec<CardType>; 2],
+    players: [PersonalState; 2],
     trash: Vec<CardType>,
+}
+
+pub struct PersonalState {
+    deck: Vec<CardType>,
+    discard: Vec<CardType>,
+    hand: Vec<CardType>,
+}
+
+impl PersonalState {
+    pub fn make() -> PersonalState {
+        PersonalState {
+            deck: vec![],
+            discard: vec![
+                CardType::Estate,
+                CardType::Estate,
+                CardType::Estate,
+                CardType::Copper,
+                CardType::Copper,
+                CardType::Copper,
+                CardType::Copper,
+                CardType::Copper,
+                CardType::Copper,
+                CardType::Copper,
+            ],
+            hand: vec![],
+        }
+    }
+
+    pub fn draw(&mut self) {
+        if self.deck.len() == 0 {
+            self.discard.shuffle(&mut thread_rng());
+            mem::swap(&mut self.deck, &mut self.discard);
+        }
+    }
 }
 
 impl<K: kingdom::Kingdom> Game<K> {
@@ -46,43 +79,14 @@ impl<K: kingdom::Kingdom> Game<K> {
             curse: 10,
             village: 10,
             kingdom: PhantomData,
-            decks: [vec![
-                CardType::Estate,
-                CardType::Estate,
-                CardType::Estate,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-            ], vec![
-                CardType::Estate,
-                CardType::Estate,
-                CardType::Estate,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-                CardType::Copper,
-            ]],
-            discards: [vec![], vec![]],
+            players: [PersonalState::make(), PersonalState::make()],
             trash: vec![],
         }
     }
 
-    pub fn draw(&mut self, who: usize) {
-        if self.decks[who].len() == 0 {
-            mem::swap(&mut self.decks[who], &mut self.discards[who]);
-        }
-    }
-
     pub fn run(&mut self) {
-        for i in 0..1 {
-            self.decks[i].shuffle(&mut thread_rng());
+        for round in 1..100 {
+
         }
     }
 }
