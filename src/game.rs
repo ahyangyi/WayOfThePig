@@ -1,5 +1,7 @@
 use crate::kingdom;
 use std::marker::PhantomData;
+use rand::thread_rng;
+use rand::seq::SliceRandom;
 
 #[derive(Copy,Clone)]
 pub enum CardType {
@@ -70,6 +72,9 @@ impl<K: kingdom::Kingdom> Game<K> {
             trash: vec![],
         }
     }
-    fn run(&self) {
+    fn run(&mut self) {
+        for i in 0..1 {
+            self.decks[i].shuffle(&mut thread_rng());
+        }
     }
 }
