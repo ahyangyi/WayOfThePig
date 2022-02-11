@@ -1,5 +1,6 @@
 use crate::kingdom;
 use std::marker::PhantomData;
+use std::mem;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
@@ -28,8 +29,8 @@ pub struct Game<K: kingdom::Kingdom> {
 
     kingdom: PhantomData<K>,
     decks: [Vec<CardType>; 2],
-    discards: [Vec<u32>; 2],
-    trash: Vec<u32>,
+    discards: [Vec<CardType>; 2],
+    trash: Vec<CardType>,
 }
 
 impl<K: kingdom::Kingdom> Game<K> {
@@ -72,7 +73,14 @@ impl<K: kingdom::Kingdom> Game<K> {
             trash: vec![],
         }
     }
-    fn run(&mut self) {
+
+    pub fn draw(&mut self, who: usize) {
+        if self.decks[who].len() == 0 {
+            mem::swap(&mut self.decks[who], &mut self.discards[who]);
+        }
+    }
+
+    pub fn run(&mut self) {
         for i in 0..1 {
             self.decks[i].shuffle(&mut thread_rng());
         }
