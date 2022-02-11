@@ -63,6 +63,11 @@ impl PersonalState {
             self.discard.shuffle(&mut thread_rng());
             mem::swap(&mut self.deck, &mut self.discard);
         }
+        let card = self.deck.pop();
+        match card {
+            None => {},
+            Some(x) => {self.hand.push(x);}
+        }
     }
 }
 
@@ -85,6 +90,10 @@ impl<K: kingdom::Kingdom> Game<K> {
     }
 
     pub fn run(&mut self) {
+        for card in 1..5 {
+            self.players[0].draw();
+            self.players[1].draw();
+        }
         for round in 1..100 {
 
         }
