@@ -16,7 +16,7 @@ pub enum CardType {
     Village,
 }
 
-pub struct Game<K: kingdom::Kingdom> {
+pub struct Game<K: kingdom::Kingdom, const N: usize> {
     province: u32,
     duchy: u32,
     estate: u32,
@@ -71,9 +71,9 @@ impl PersonalState {
     }
 }
 
-impl<K: kingdom::Kingdom> Game<K> {
-    pub fn make(n: u32) -> Game<K> {
-        let green_count = if n > 2 {12} else {8};
+impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
+    pub fn make() -> Game<K, N> {
+        let green_count = if N > 2 {12} else {8};
         Game {
             province: green_count,
             duchy: green_count,
