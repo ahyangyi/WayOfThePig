@@ -28,7 +28,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     village: u32,
 
     kingdom: PhantomData<K>,
-    players: [PersonalState; 2],
+    players: [PersonalState; N],
     trash: Vec<CardType>,
 }
 
@@ -74,7 +74,7 @@ impl PersonalState {
 impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     pub fn make() -> Game<K, N> {
         let green_count = if N > 2 {12} else {8};
-        Game {
+        let ret: Game<K, N> = Game {
             province: green_count,
             duchy: green_count,
             estate: green_count,
@@ -84,9 +84,10 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             curse: 10,
             village: 10,
             kingdom: PhantomData,
-            players: [PersonalState::make(), PersonalState::make()],
+            players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
-        }
+        };
+        ret
     }
 
     pub fn province_end(&mut self) -> bool {
