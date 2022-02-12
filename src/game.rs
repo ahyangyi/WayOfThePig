@@ -89,6 +89,33 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         }
     }
 
+    pub fn province_end(&mut self) -> bool {
+        return self.province == 0;
+    }
+
+    pub fn pile_end(&mut self) -> bool {
+        let mut empty_pile = 0;
+        if self.duchy == 0 {
+            empty_pile+=1;
+        }
+        if self.estate == 0 {
+            empty_pile+=1;
+        }
+        if self.gold == 0 {
+            empty_pile+=1;
+        }
+        if self.silver == 0 {
+            empty_pile+=1;
+        }
+        if self.copper == 0 {
+            empty_pile+=1;
+        }
+        if self.curse == 0 {
+            empty_pile+=1;
+        }
+        empty_pile >= 3
+    }
+
     pub fn run(&mut self) -> u32 {
         for card in 0..5 {
             self.players[0].draw();
