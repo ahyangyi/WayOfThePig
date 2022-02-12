@@ -7,7 +7,7 @@
 //   Buy Duchy if remaining province <= 6
 //   Buy silver
 trait Controller {
-    fn buy(&mut self, game: &Game) {
+    fn buy(&mut self, game: mut &Game, hand: mut &PersonalState) {
         game.buy_gold() || game.buy_silver();
     }
 }
