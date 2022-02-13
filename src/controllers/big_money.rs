@@ -6,7 +6,9 @@
 //   Buy gold
 //   Buy Duchy if remaining province <= 6
 //   Buy silver
-trait Controller {
+use crate::kingdom;
+
+trait Controller<K: Kingdom> {
     fn buy(&mut self, game: mut &Game, hand: mut &PersonalState) {
         game.buy_gold() || game.buy_silver();
     }
