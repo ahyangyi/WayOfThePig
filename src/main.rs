@@ -1,6 +1,6 @@
-use dominion_simulator::game;
-use dominion_simulator::kingdom;
-use dominion_simulator::controller;
+use way_of_the_pig::game;
+use way_of_the_pig::kingdom;
+use way_of_the_pig::controller;
 
 fn main() {
     let mut p1 : u32 = 0;
