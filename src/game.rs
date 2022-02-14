@@ -35,6 +35,9 @@ pub struct PersonalState {
     deck: Vec<CardType>,
     discard: Vec<CardType>,
     hand: Vec<CardType>,
+    action: u32,
+    buy: u32,
+    coin: u32,
 }
 
 impl PersonalState {
@@ -54,6 +57,9 @@ impl PersonalState {
                 CardType::Copper,
             ],
             hand: vec![],
+            action: 0,
+            buy: 0,
+            coin: 0,
         }
     }
 
@@ -67,6 +73,12 @@ impl PersonalState {
             None => {},
             Some(x) => {self.hand.push(x);}
         }
+    }
+
+    pub fn turn_start(&mut self) {
+        self.action = 1;
+        self.buy = 1;
+        self.coin = 0;
     }
 }
 
@@ -122,7 +134,8 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             self.players[1].draw();
         }
         for _round in 1..100 {
-
+            self.players[0].turn_start();
+            self.players[1].turn_start();
         }
         0
     }

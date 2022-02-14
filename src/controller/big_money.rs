@@ -15,10 +15,19 @@ pub struct BigMoneyController<K: kingdom::Kingdom> {
     kingdom: PhantomData<K>,
 }
 
+impl<K: kingdom::Kingdom> BigMoneyController<K> {
+    fn total_money(&mut self) -> u32 {
+        1
+    }
+}
+
 impl<K: kingdom::Kingdom> controller::Controller<K> for BigMoneyController<K> {
     fn act(&mut self) {
     }
     fn buy(&mut self, game: &mut game::Game<K, 2>, hand: &mut game::PersonalState) {
+        if self.total_money() > 18 {
+
+        }
         // game.buy_gold() || game.buy_silver();
     }
 }
