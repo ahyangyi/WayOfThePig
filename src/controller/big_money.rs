@@ -11,7 +11,7 @@ use crate::game;
 use crate::controller;
 use std::marker::PhantomData;
 
-pub struct BigMoneyController<K: kingdom::Kingdom> {
+pub struct BigMoneyController<K: kingdom::Kingdom, const N: usize> {
     kingdom: PhantomData<K>,
 }
 
@@ -19,18 +19,18 @@ fn total_money() -> u32 {
     1
 }
 
-impl<K: kingdom::Kingdom> BigMoneyController<K> {
-    pub fn make() -> BigMoneyController<K> {
+impl<K: kingdom::Kingdom, const N: usize> BigMoneyController<K, N> {
+    pub fn make() -> BigMoneyController<K, N> {
         BigMoneyController {
             kingdom: PhantomData,
         }
     }
 }
 
-impl<K: kingdom::Kingdom> controller::Controller<K> for BigMoneyController<K> {
+impl<K: kingdom::Kingdom, const N: usize> controller::Controller<K, N> for BigMoneyController<K, N> {
     fn act(&mut self) {
     }
-    fn buy(&mut self, game: &mut game::Game<K, 2>, hand: &mut game::PersonalState) {
+    fn buy(&mut self, game: &mut game::Game<K, N>) {
         if total_money() > 18 {
 
         }

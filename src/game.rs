@@ -127,22 +127,22 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         empty_pile >= 3
     }
 
-    pub fn run<T1: controller::Controller<K>, T2: controller::Controller<K>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
+    pub fn run<T1: controller::Controller<K, N>, T2: controller::Controller<K, N>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
         for card in 0..5 {
             for player in 0..2 {
                 self.players[player].draw();
             }
         }
         for _round in 1..100 {
-            for player in 0..2 {
-                self.players[player].turn_start();
-                while self.players[player].action > 0 {
-                    break;
-                }
-                while self.players[player].buy > 0 {
-                    break;
-                }
+            self.players[0].turn_start();
+            t1.act();
+            t1.buy(self);
+            if self.province_end() || self.pile_end() {
+                break;
             }
+            self.players[1].turn_start();
+            t2.act();
+            t2.buy(self);
             if self.province_end() || self.pile_end() {
                 break;
             }
