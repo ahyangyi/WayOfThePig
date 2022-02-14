@@ -100,11 +100,11 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         ret
     }
 
-    pub fn province_end(&mut self) -> bool {
+    fn province_end(&mut self) -> bool {
         return self.province == 0;
     }
 
-    pub fn pile_end(&mut self) -> bool {
+    fn pile_end(&mut self) -> bool {
         let mut empty_pile = 0;
         if self.duchy == 0 {
             empty_pile+=1;
