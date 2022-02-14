@@ -18,7 +18,7 @@ pub enum CardType {
 }
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
-    province: u32,
+    pub province: u32,
     duchy: u32,
     estate: u32,
     gold: u32,
@@ -27,7 +27,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     curse: u32,
 
     kingdom: PhantomData<K>,
-    players: [PersonalState; N],
+    pub players: [PersonalState; N],
     trash: Vec<CardType>,
 }
 
@@ -35,9 +35,9 @@ pub struct PersonalState {
     deck: Vec<CardType>,
     discard: Vec<CardType>,
     hand: Vec<CardType>,
-    action: u32,
-    buy: u32,
-    coin: u32,
+    pub action: u32,
+    pub buy: u32,
+    pub coin: u32,
 }
 
 impl PersonalState {
@@ -128,25 +128,58 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     }
 
     pub fn run<T1: controller::Controller<K, N>, T2: controller::Controller<K, N>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
-        for card in 0..5 {
-            for player in 0..2 {
+        for player in 0..2 {
+            for _card in 0..5 {
                 self.players[player].draw();
             }
         }
         for _round in 1..100 {
             self.players[0].turn_start();
             t1.act();
-            t1.buy(self);
+            t1.buy::<0>(self);
             if self.province_end() || self.pile_end() {
                 break;
             }
             self.players[1].turn_start();
             t2.act();
-            t2.buy(self);
+            t2.buy::<1>(self);
             if self.province_end() || self.pile_end() {
                 break;
             }
         }
         0
+    }
+
+    pub fn buy_province<const P: usize>(&mut self) -> bool {
+        if self.province == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
+            return false;
+        }
+        self.province -= 1;
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 8;
+        self.players[P].discard.push(CardType::Province);
+        true
+    }
+
+    pub fn buy_duchy<const P: usize>(&mut self) -> bool {
+        if self.duchy == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
+            return false;
+        }
+        self.duchy -= 1;
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 5;
+        self.players[P].discard.push(CardType::Duchy);
+        true
+    }
+
+    pub fn buy_estate<const P: usize>(&mut self) -> bool {
+        if self.estate == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
+            return false;
+        }
+        self.estate -= 1;
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 2;
+        self.players[P].discard.push(CardType::Estate);
+        true
     }
 }

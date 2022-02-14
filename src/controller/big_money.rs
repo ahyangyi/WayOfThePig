@@ -15,7 +15,7 @@ pub struct BigMoneyController<K: kingdom::Kingdom, const N: usize> {
     kingdom: PhantomData<K>,
 }
 
-fn total_money() -> u32 {
+fn total_money<K: kingdom::Kingdom, const N: usize, const P: usize>(game: &mut game::Game<K, N>) -> u32 {
     1
 }
 
@@ -30,10 +30,13 @@ impl<K: kingdom::Kingdom, const N: usize> BigMoneyController<K, N> {
 impl<K: kingdom::Kingdom, const N: usize> controller::Controller<K, N> for BigMoneyController<K, N> {
     fn act(&mut self) {
     }
-    fn buy(&mut self, game: &mut game::Game<K, N>) {
-        if total_money() > 18 {
-
+    fn buy<const P: usize>(&mut self, game: &mut game::Game<K, N>) {
+        if total_money::<K, N, P>(game) > 18 && game.buy_province::<P>() {
+            return;
+        } else if game.province <= 4 && game.buy_duchy::<P>() {
+            return;
+        } else if game.province <= 2 && game.buy_estate::<P>() {
+            return;
         }
-        // game.buy_gold() || game.buy_silver();
     }
 }
