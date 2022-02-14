@@ -130,12 +130,23 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     //pub fn run<T1: controller::Controller<K>, T2: controller::Controller<K>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
     pub fn run(&mut self) -> u32 {
         for card in 0..5 {
-            self.players[0].draw();
-            self.players[1].draw();
+            for player in 0..2 {
+                self.players[player].draw();
+            }
         }
         for _round in 1..100 {
-            self.players[0].turn_start();
-            self.players[1].turn_start();
+            for player in 0..2 {
+                self.players[player].turn_start();
+                while self.players[player].action > 0 {
+                    break;
+                }
+                while self.players[player].buy > 0 {
+                    break;
+                }
+            }
+            if self.province_end() || self.pile_end() {
+                break;
+            }
         }
         0
     }
