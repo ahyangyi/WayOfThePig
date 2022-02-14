@@ -133,6 +133,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
                 self.players[player].draw();
             }
         }
+        let mut break_pos : u32 = 0;
         for _round in 1..100 {
             self.players[0].turn_start();
             t1.act();
@@ -144,10 +145,14 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             t2.act();
             t2.buy::<1>(self);
             if self.province_end() || self.pile_end() {
+                break_pos = 1;
                 break;
             }
         }
-        0
+        let mut vp_0 = 0;
+        let mut vp_1 = 0;
+        let ret:u32 = if vp_0 > vp_1 {0} else {1};
+        ret
     }
 
     pub fn buy_province<const P: usize>(&mut self) -> bool {
