@@ -19,6 +19,14 @@ fn total_money() -> u32 {
     1
 }
 
+impl<K: kingdom::Kingdom> BigMoneyController<K> {
+    pub fn make() -> BigMoneyController<K> {
+        BigMoneyController {
+            kingdom: PhantomData,
+        }
+    }
+}
+
 impl<K: kingdom::Kingdom> controller::Controller<K> for BigMoneyController<K> {
     fn act(&mut self) {
     }

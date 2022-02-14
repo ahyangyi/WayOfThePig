@@ -127,8 +127,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         empty_pile >= 3
     }
 
-    //pub fn run<T1: controller::Controller<K>, T2: controller::Controller<K>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
-    pub fn run(&mut self) -> u32 {
+    pub fn run<T1: controller::Controller<K>, T2: controller::Controller<K>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
         for card in 0..5 {
             for player in 0..2 {
                 self.players[player].draw();

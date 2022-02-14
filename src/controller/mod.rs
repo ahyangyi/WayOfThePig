@@ -1,7 +1,7 @@
 use crate::kingdom;
 use crate::game;
 
-mod big_money;
+pub mod big_money;
 
 pub trait Controller<K: kingdom::Kingdom> {
     fn act(&mut self);
