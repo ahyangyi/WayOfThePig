@@ -26,8 +26,6 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     copper: u32,
     curse: u32,
 
-    village: u32,
-
     kingdom: PhantomData<K>,
     players: [PersonalState; N],
     trash: Vec<CardType>,
@@ -83,7 +81,6 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             silver: 40,
             copper: 46,
             curse: 10,
-            village: 10,
             kingdom: PhantomData,
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
