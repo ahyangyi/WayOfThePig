@@ -167,7 +167,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     }
 
     pub fn buy_duchy<const P: usize>(&mut self) -> bool {
-        if self.duchy == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
+        if self.duchy == 0 || self.players[P].buy == 0 || self.players[P].coin < 5 {
             return false;
         }
         self.duchy -= 1;
@@ -178,13 +178,35 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     }
 
     pub fn buy_estate<const P: usize>(&mut self) -> bool {
-        if self.estate == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
+        if self.estate == 0 || self.players[P].buy == 0 || self.players[P].coin < 2 {
             return false;
         }
         self.estate -= 1;
         self.players[P].buy -= 1;
         self.players[P].coin -= 2;
         self.players[P].discard.push(CardType::Estate);
+        true
+    }
+
+    pub fn buy_gold<const P: usize>(&mut self) -> bool {
+        if self.gold == 0 || self.players[P].buy == 0 || self.players[P].coin < 6 {
+            return false;
+        }
+        self.gold -= 1;
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 6;
+        self.players[P].discard.push(CardType::Gold);
+        true
+    }
+
+    pub fn buy_silver<const P: usize>(&mut self) -> bool {
+        if self.silver == 0 || self.players[P].buy == 0 || self.players[P].coin < 3 {
+            return false;
+        }
+        self.silver -= 1;
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 3;
+        self.players[P].discard.push(CardType::Silver);
         true
     }
 }

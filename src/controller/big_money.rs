@@ -37,6 +37,12 @@ impl<K: kingdom::Kingdom, const N: usize> controller::Controller<K, N> for BigMo
             return;
         } else if game.province <= 2 && game.buy_estate::<P>() {
             return;
+        } else if game.buy_gold::<P>() {
+            return;
+        } else if game.province <= 6 && game.buy_duchy::<P>() {
+            return;
+        } else {
+            game.buy_silver::<P>();
         }
     }
 }
