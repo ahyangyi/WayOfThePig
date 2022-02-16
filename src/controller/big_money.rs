@@ -73,13 +73,13 @@ impl<K: kingdom::Kingdom, const N: usize> controller::Controller<K, N> for BigMo
         while game.players[P].play_copper() {}
         if total_money::<K, N, P>(game) > 18 && game.buy_province::<P>() {
             return;
-        } else if game.province <= 4 && game.buy_duchy::<P>() {
+        } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
             return;
-        } else if game.province <= 2 && game.buy_estate::<P>() {
+        } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
             return;
         } else if game.buy_gold::<P>() {
             return;
-        } else if game.province <= 6 && game.buy_duchy::<P>() {
+        } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
             return;
         } else {
             game.buy_silver::<P>();

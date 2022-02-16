@@ -18,7 +18,7 @@ pub enum CardType {
 }
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
-    pub province: u32,
+    province: u32,
     duchy: u32,
     estate: u32,
     gold: u32,
@@ -36,9 +36,9 @@ pub struct PersonalState {
     pub discard: Vec<CardType>,
     pub hand: Vec<CardType>,
     pub play: Vec<CardType>,
-    pub action: u32,
-    pub buy: u32,
-    pub coin: u32,
+    action: u32,
+    buy: u32,
+    coin: u32,
 }
 
 impl PersonalState {
@@ -135,7 +135,7 @@ impl PersonalState {
     }
 
     // only guarantees meaningful results at game end
-    pub fn total_final_vp(&mut self) -> u32 {
+    pub fn total_final_vp(&self) -> u32 {
         let mut ret : u32 = 0;
         for card in self.hand.iter() {
             if card == &CardType::Province {
@@ -174,6 +174,18 @@ impl PersonalState {
             }
         }
         ret
+    }
+
+    pub fn get_action(&self) -> u32 {
+        self.action
+    }
+
+    pub fn get_buy(&self) -> u32 {
+        self.buy
+    }
+
+    pub fn get_coin(&self) -> u32 {
+        self.coin
     }
 }
 
@@ -305,5 +317,9 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         self.players[P].coin -= 3;
         self.players[P].discard.push(CardType::Silver);
         true
+    }
+
+    pub fn province_in_supply(&self) -> u32 {
+        self.province
     }
 }
