@@ -5,7 +5,7 @@ use std::mem;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
-#[derive(Copy,Clone)]
+#[derive(Copy,Clone,PartialEq,Debug)]
 pub enum CardType {
     Province,
     Duchy,
@@ -32,9 +32,10 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 }
 
 pub struct PersonalState {
-    deck: Vec<CardType>,
-    discard: Vec<CardType>,
-    hand: Vec<CardType>,
+    pub deck: Vec<CardType>,
+    pub discard: Vec<CardType>,
+    pub hand: Vec<CardType>,
+    pub play: Vec<CardType>,
     pub action: u32,
     pub buy: u32,
     pub coin: u32,
@@ -57,6 +58,7 @@ impl PersonalState {
                 CardType::Copper,
             ],
             hand: vec![],
+            play: vec![],
             action: 0,
             buy: 0,
             coin: 0,
@@ -79,6 +81,99 @@ impl PersonalState {
         self.action = 1;
         self.buy = 1;
         self.coin = 0;
+    }
+
+    pub fn clean_up(&mut self) {
+        while self.hand.len() > 0 {
+            self.discard.push(self.hand.pop().unwrap());
+        }
+        while self.play.len() > 0 {
+            self.discard.push(self.play.pop().unwrap());
+        }
+        for _card in 0..5 {
+            self.draw();
+        }
+    }
+
+    pub fn play_gold(&mut self) -> bool {
+        let card = self.hand.iter().position(|&c| c == CardType::Gold);
+        match card {
+            None => false,
+            Some(pos) => {
+                self.hand.remove(pos);
+                self.play.push(CardType::Gold);
+                self.coin += 3;
+                true
+            }
+        }
+    }
+
+    pub fn play_silver(&mut self) -> bool {
+        let card = self.hand.iter().position(|&c| c == CardType::Silver);
+        match card {
+            None => false,
+            Some(pos) => {
+                self.hand.remove(pos);
+                self.play.push(CardType::Silver);
+                self.coin += 2;
+                true
+            }
+        }
+    }
+
+    pub fn play_copper(&mut self) -> bool {
+        let card = self.hand.iter().position(|&c| c == CardType::Copper);
+        match card {
+            None => false,
+            Some(pos) => {
+                self.hand.remove(pos);
+                self.play.push(CardType::Copper);
+                self.coin += 1;
+                true
+            }
+        }
+    }
+
+    // only guarantees meaningful results at game end
+    pub fn total_final_vp(&mut self) -> u32 {
+        let mut ret : u32 = 0;
+        for card in self.hand.iter() {
+            if card == &CardType::Province {
+                ret += 6;
+            } else if card == &CardType::Duchy {
+                ret += 3;
+            } else if card == &CardType::Estate {
+                ret += 1;
+            }
+        }
+        for card in self.deck.iter() {
+            if card == &CardType::Province {
+                ret += 6;
+            } else if card == &CardType::Duchy {
+                ret += 3;
+            } else if card == &CardType::Estate {
+                ret += 1;
+            }
+        }
+        for card in self.discard.iter() {
+            if card == &CardType::Province {
+                ret += 6;
+            } else if card == &CardType::Duchy {
+                ret += 3;
+            } else if card == &CardType::Estate {
+                ret += 1;
+            }
+        }
+        for card in self.play.iter() {
+            if card == &CardType::Province {
+                ret += 6;
+            } else if card == &CardType::Duchy {
+                ret += 3;
+            } else if card == &CardType::Estate {
+                ret += 1;
+            }
+        }
+        ret
     }
 }
 
@@ -141,6 +236,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             if self.province_end() || self.pile_end() {
                 break;
             }
+            self.players[0].clean_up();
             self.players[1].turn_start();
             t2.act();
             t2.buy::<1>(self);
@@ -148,10 +244,11 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
                 break_pos = 1;
                 break;
             }
+            self.players[1].clean_up();
         }
-        let mut vp_0 = 0;
-        let mut vp_1 = 0;
-        let ret:u32 = if vp_0 > vp_1 {0} else {1};
+        let mut vp_0 = self.players[0].total_final_vp();
+        let mut vp_1 = self.players[1].total_final_vp();
+        let ret:u32 = if vp_0 > vp_1 {0} else if vp_0 < vp_1 {1} else {1};
         ret
     }
 
