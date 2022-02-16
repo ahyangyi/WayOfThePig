@@ -12,44 +12,9 @@ pub struct BigMoneyController<K: kingdom::Kingdom, const N: usize> {
 }
 
 fn total_money<K: kingdom::Kingdom, const N: usize, const P: usize>(game: &mut game::Game<K, N>) -> u32 {
-    let mut ret : u32 = 0;
-    for card in game.players[P].hand.iter() {
-        if card == &game::CardType::Gold {
-            ret += 3;
-        } else if card == &game::CardType::Silver {
-            ret += 2;
-        } else if card == &game::CardType::Copper {
-            ret += 1;
-        }
-    }
-    for card in game.players[P].deck.iter() {
-        if card == &game::CardType::Gold {
-            ret += 3;
-        } else if card == &game::CardType::Silver {
-            ret += 2;
-        } else if card == &game::CardType::Copper {
-            ret += 1;
-        }
-    }
-    for card in game.players[P].discard.iter() {
-        if card == &game::CardType::Gold {
-            ret += 3;
-        } else if card == &game::CardType::Silver {
-            ret += 2;
-        } else if card == &game::CardType::Copper {
-            ret += 1;
-        }
-    }
-    for card in game.players[P].play.iter() {
-        if card == &game::CardType::Gold {
-            ret += 3;
-        } else if card == &game::CardType::Silver {
-            ret += 2;
-        } else if card == &game::CardType::Copper {
-            ret += 1;
-        }
-    }
-    ret
+    game.players[P].count_card(game::CardType::Gold) * 3 +
+    game.players[P].count_card(game::CardType::Silver) * 2 +
+    game.players[P].count_card(game::CardType::Copper) * 1
 }
 
 impl<K: kingdom::Kingdom, const N: usize> BigMoneyController<K, N> {

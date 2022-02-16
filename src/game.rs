@@ -136,44 +136,9 @@ impl PersonalState {
 
     // only guarantees meaningful results at game end
     pub fn total_final_vp(&self) -> u32 {
-        let mut ret : u32 = 0;
-        for card in self.hand.iter() {
-            if card == &CardType::Province {
-                ret += 6;
-            } else if card == &CardType::Duchy {
-                ret += 3;
-            } else if card == &CardType::Estate {
-                ret += 1;
-            }
-        }
-        for card in self.deck.iter() {
-            if card == &CardType::Province {
-                ret += 6;
-            } else if card == &CardType::Duchy {
-                ret += 3;
-            } else if card == &CardType::Estate {
-                ret += 1;
-            }
-        }
-        for card in self.discard.iter() {
-            if card == &CardType::Province {
-                ret += 6;
-            } else if card == &CardType::Duchy {
-                ret += 3;
-            } else if card == &CardType::Estate {
-                ret += 1;
-            }
-        }
-        for card in self.play.iter() {
-            if card == &CardType::Province {
-                ret += 6;
-            } else if card == &CardType::Duchy {
-                ret += 3;
-            } else if card == &CardType::Estate {
-                ret += 1;
-            }
-        }
-        ret
+        self.count_card(CardType::Province) * 6 +
+        self.count_card(CardType::Duchy) * 3 +
+        self.count_card(CardType::Estate) * 1
     }
 
     pub fn get_action(&self) -> u32 {
@@ -186,6 +151,31 @@ impl PersonalState {
 
     pub fn get_coin(&self) -> u32 {
         self.coin
+    }
+
+    pub fn count_card(&self, c: CardType) -> u32 {
+        let mut ret : u32 = 0;
+        for card in self.hand.iter() {
+            if card == &c {
+                ret += 1;
+            }
+        }
+        for card in self.deck.iter() {
+            if card == &c {
+                ret += 1;
+            }
+        }
+        for card in self.discard.iter() {
+            if card == &c {
+                ret += 1;
+            }
+        }
+        for card in self.play.iter() {
+            if card == &c {
+                ret += 1;
+            }
+        }
+        ret
     }
 }
 
