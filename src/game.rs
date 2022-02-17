@@ -2,7 +2,7 @@ use crate::kingdom;
 use crate::controller;
 use std::marker::PhantomData;
 use std::mem;
-use rand::thread_rng;
+use rand::{thread_rng, Rng};
 use rand::seq::SliceRandom;
 
 #[derive(Copy,Clone,PartialEq,Debug)]
@@ -276,6 +276,18 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             [0, 1]
         } else {
             [0, 0]
+        }
+    }
+
+    pub fn run_random<T1: controller::Controller<Game<K, N>>, T2: controller::Controller<Game<K, N>>>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
+        let mut rng = rand::thread_rng();
+        let scheme = rng.gen_range(0..2);
+
+        if scheme == 0 {
+            self.run(t1, t2)
+        } else {
+            let [r2, r1] = self.run(t2, t1);
+            [r1, r2]
         }
     }
 }
