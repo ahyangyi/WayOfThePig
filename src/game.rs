@@ -17,6 +17,9 @@ pub enum CardType {
     Village,
 }
 
+pub trait GameState {
+}
+
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
     province: u32,
     duchy: u32,
@@ -228,6 +231,10 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         empty_pile >= 3
     }
 
+    fn end(&self) -> bool {
+        self.province_end() || self.colony_end() || self.pile_end()
+    }
+
     pub fn run<T1: controller::Controller<K, N>, T2: controller::Controller<K, N>>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
         for player in 0..2 {
             for _card in 0..5 {
@@ -239,14 +246,14 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             self.players[0].turn_start();
             t1.act();
             t1.buy::<0>(self);
-            if self.province_end() || self.colony_end() || self.pile_end() {
+            if self.end() {
                 break;
             }
             self.players[0].clean_up();
             self.players[1].turn_start();
             t2.act();
             t2.buy::<1>(self);
-            if self.province_end() || self.colony_end() || self.pile_end() {
+            if self.end() {
                 break_pos = 1;
                 break;
             }
