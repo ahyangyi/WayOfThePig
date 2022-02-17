@@ -197,11 +197,15 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         ret
     }
 
-    fn province_end(&mut self) -> bool {
-        return self.province == 0;
+    fn province_end(&self) -> bool {
+        self.province == 0
+    }
+    
+    fn colony_end(&self) -> bool {
+        false
     }
 
-    fn pile_end(&mut self) -> bool {
+    fn pile_end(&self) -> bool {
         let mut empty_pile = 0;
         if self.duchy == 0 {
             empty_pile+=1;
@@ -235,14 +239,14 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             self.players[0].turn_start();
             t1.act();
             t1.buy::<0>(self);
-            if self.province_end() || self.pile_end() {
+            if self.province_end() || self.colony_end() || self.pile_end() {
                 break;
             }
             self.players[0].clean_up();
             self.players[1].turn_start();
             t2.act();
             t2.buy::<1>(self);
-            if self.province_end() || self.pile_end() {
+            if self.province_end() || self.colony_end() || self.pile_end() {
                 break_pos = 1;
                 break;
             }
