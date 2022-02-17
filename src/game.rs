@@ -18,6 +18,12 @@ pub enum CardType {
 }
 
 pub trait GameState {
+    fn buy_province<const P: usize>(&mut self) -> bool;
+    fn buy_duchy<const P: usize>(&mut self) -> bool;
+    fn buy_estate<const P: usize>(&mut self) -> bool;
+    fn buy_gold<const P: usize>(&mut self) -> bool;
+    fn buy_silver<const P: usize>(&mut self) -> bool;
+    fn province_in_supply(&self) -> u32;
 }
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
@@ -271,8 +277,10 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             [0, 0]
         }
     }
+}
 
-    pub fn buy_province<const P: usize>(&mut self) -> bool {
+impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
+    fn buy_province<const P: usize>(&mut self) -> bool {
         if self.province == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
             return false;
         }
@@ -283,7 +291,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         true
     }
 
-    pub fn buy_duchy<const P: usize>(&mut self) -> bool {
+    fn buy_duchy<const P: usize>(&mut self) -> bool {
         if self.duchy == 0 || self.players[P].buy == 0 || self.players[P].coin < 5 {
             return false;
         }
@@ -294,7 +302,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         true
     }
 
-    pub fn buy_estate<const P: usize>(&mut self) -> bool {
+    fn buy_estate<const P: usize>(&mut self) -> bool {
         if self.estate == 0 || self.players[P].buy == 0 || self.players[P].coin < 2 {
             return false;
         }
@@ -305,7 +313,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         true
     }
 
-    pub fn buy_gold<const P: usize>(&mut self) -> bool {
+    fn buy_gold<const P: usize>(&mut self) -> bool {
         if self.gold == 0 || self.players[P].buy == 0 || self.players[P].coin < 6 {
             return false;
         }
@@ -316,7 +324,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         true
     }
 
-    pub fn buy_silver<const P: usize>(&mut self) -> bool {
+    fn buy_silver<const P: usize>(&mut self) -> bool {
         if self.silver == 0 || self.players[P].buy == 0 || self.players[P].coin < 3 {
             return false;
         }
@@ -327,7 +335,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         true
     }
 
-    pub fn province_in_supply(&self) -> u32 {
+    fn province_in_supply(&self) -> u32 {
         self.province
     }
 }

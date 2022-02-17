@@ -9,6 +9,7 @@
 use crate::kingdom;
 use crate::game;
 use crate::controller;
+use crate::game::GameState;
 use std::marker::PhantomData;
 
 pub struct BigMoneyController<K: kingdom::Kingdom, const N: usize> {
