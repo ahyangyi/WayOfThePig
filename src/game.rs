@@ -32,10 +32,10 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 }
 
 pub struct PersonalState {
-    pub deck: Vec<CardType>,
-    pub discard: Vec<CardType>,
-    pub hand: Vec<CardType>,
-    pub play: Vec<CardType>,
+    deck: Vec<CardType>,
+    discard: Vec<CardType>,
+    hand: Vec<CardType>,
+    play: Vec<CardType>,
     action: u32,
     buy: u32,
     coin: u32,
@@ -248,8 +248,8 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             }
             self.players[1].clean_up();
         }
-        let mut vp_0 = self.players[0].total_final_vp();
-        let mut vp_1 = self.players[1].total_final_vp();
+        let vp_0 = self.players[0].total_final_vp();
+        let vp_1 = self.players[1].total_final_vp();
         let ret:u32 = if vp_0 > vp_1 {0} else if vp_0 < vp_1 {1} else {1};
         ret
     }
