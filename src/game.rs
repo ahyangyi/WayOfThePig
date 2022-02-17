@@ -224,7 +224,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         empty_pile >= 3
     }
 
-    pub fn run<T1: controller::Controller<K, N>, T2: controller::Controller<K, N>>(&mut self, t1: &mut T1, t2: &mut T2) -> u32 {
+    pub fn run<T1: controller::Controller<K, N>, T2: controller::Controller<K, N>>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
         for player in 0..2 {
             for _card in 0..5 {
                 self.players[player].draw();
@@ -250,8 +250,15 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         }
         let vp_0 = self.players[0].total_final_vp();
         let vp_1 = self.players[1].total_final_vp();
-        let ret:u32 = if vp_0 > vp_1 {0} else if vp_0 < vp_1 {1} else {1};
-        ret
+        if vp_0 > vp_1 {
+            [0, 1]
+        } else if vp_0 < vp_1 {
+            [1, 0]
+        } else if break_pos == 0 {
+            [0, 1]
+        } else {
+            [0, 0]
+        }
     }
 
     pub fn buy_province<const P: usize>(&mut self) -> bool {
