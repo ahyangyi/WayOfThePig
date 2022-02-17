@@ -46,6 +46,7 @@ pub struct PersonalState {
     discard: Vec<CardType>,
     hand: Vec<CardType>,
     play: Vec<CardType>,
+    deckStats: [u32; 7],
     action: u32,
     buy: u32,
     coin: u32,
@@ -69,6 +70,7 @@ impl PersonalState {
             ],
             hand: vec![],
             play: vec![],
+            deckStats: [0, 0, 3, 0, 0, 7, 0],
             action: 0,
             buy: 0,
             coin: 0,
@@ -164,28 +166,7 @@ impl PersonalState {
     }
 
     pub fn count_card(&self, c: CardType) -> u32 {
-        let mut ret : u32 = 0;
-        for card in self.hand.iter() {
-            if card == &c {
-                ret += 1;
-            }
-        }
-        for card in self.deck.iter() {
-            if card == &c {
-                ret += 1;
-            }
-        }
-        for card in self.discard.iter() {
-            if card == &c {
-                ret += 1;
-            }
-        }
-        for card in self.play.iter() {
-            if card == &c {
-                ret += 1;
-            }
-        }
-        ret
+        self.deckStats[c as usize]
     }
 }
 
@@ -301,6 +282,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 8;
         self.players[P].discard.push(CardType::Province);
+        self.players[P].deckStats[CardType::Province as usize] += 1;
         true
     }
 
@@ -312,6 +294,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 5;
         self.players[P].discard.push(CardType::Duchy);
+        self.players[P].deckStats[CardType::Duchy as usize] += 1;
         true
     }
 
@@ -323,6 +306,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 2;
         self.players[P].discard.push(CardType::Estate);
+        self.players[P].deckStats[CardType::Estate as usize] += 1;
         true
     }
 
@@ -334,6 +318,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 6;
         self.players[P].discard.push(CardType::Gold);
+        self.players[P].deckStats[CardType::Gold as usize] += 1;
         true
     }
 
@@ -345,6 +330,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 3;
         self.players[P].discard.push(CardType::Silver);
+        self.players[P].deckStats[CardType::Silver as usize] += 1;
         true
     }
 
