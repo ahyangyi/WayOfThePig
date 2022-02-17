@@ -4,8 +4,10 @@ use std::marker::PhantomData;
 use std::mem;
 use rand::{thread_rng, Rng};
 use rand::seq::SliceRandom;
+use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 
-#[derive(Copy,Clone,PartialEq,Debug)]
+#[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
 pub enum CardType {
     Province,
     Duchy,
@@ -44,7 +46,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 pub struct PersonalState {
     deck: Vec<CardType>,
     discard: Vec<CardType>,
-    hand: Vec<CardType>,
+    hand: [u32; 7],
     play: Vec<CardType>,
     deckStats: [u32; 7],
     action: u32,
@@ -68,7 +70,7 @@ impl PersonalState {
                 CardType::Copper,
                 CardType::Copper,
             ],
-            hand: vec![],
+            hand: [0; 7],
             play: vec![],
             deckStats: [0, 0, 3, 0, 0, 7, 0],
             action: 0,
@@ -85,7 +87,7 @@ impl PersonalState {
         let card = self.deck.pop();
         match card {
             None => {},
-            Some(x) => {self.hand.push(x);}
+            Some(x) => {self.hand[x as usize] += 1;}
         }
     }
 
@@ -96,8 +98,11 @@ impl PersonalState {
     }
 
     pub fn clean_up(&mut self) {
-        while self.hand.len() > 0 {
-            self.discard.push(self.hand.pop().unwrap());
+        for i in 0..7 {
+            for _j in 0..self.hand[i] {
+                self.discard.push(FromPrimitive::from_usize(i).unwrap());
+            }
+            self.hand[i] = 0;
         }
         while self.play.len() > 0 {
             self.discard.push(self.play.pop().unwrap());
@@ -108,42 +113,33 @@ impl PersonalState {
     }
 
     pub fn play_gold(&mut self) -> bool {
-        let card = self.hand.iter().position(|&c| c == CardType::Gold);
-        match card {
-            None => false,
-            Some(pos) => {
-                self.hand.remove(pos);
-                self.play.push(CardType::Gold);
-                self.coin += 3;
-                true
-            }
+        if self.hand[CardType::Gold as usize] == 0 {
+            return false;
         }
+        self.hand[CardType::Gold as usize] -= 1;
+        self.play.push(CardType::Gold);
+        self.coin += 3;
+        true
     }
 
     pub fn play_silver(&mut self) -> bool {
-        let card = self.hand.iter().position(|&c| c == CardType::Silver);
-        match card {
-            None => false,
-            Some(pos) => {
-                self.hand.remove(pos);
-                self.play.push(CardType::Silver);
-                self.coin += 2;
-                true
-            }
+        if self.hand[CardType::Silver as usize] == 0 {
+            return false;
         }
+        self.hand[CardType::Silver as usize] -= 1;
+        self.play.push(CardType::Silver);
+        self.coin += 2;
+        true
     }
 
     pub fn play_copper(&mut self) -> bool {
-        let card = self.hand.iter().position(|&c| c == CardType::Copper);
-        match card {
-            None => false,
-            Some(pos) => {
-                self.hand.remove(pos);
-                self.play.push(CardType::Copper);
-                self.coin += 1;
-                true
-            }
+        if self.hand[CardType::Copper as usize] == 0 {
+            return false;
         }
+        self.hand[CardType::Copper as usize] -= 1;
+        self.play.push(CardType::Copper);
+        self.coin += 1;
+        true
     }
 
     // only guarantees meaningful results at game end
