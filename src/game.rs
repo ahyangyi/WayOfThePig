@@ -148,9 +148,9 @@ impl PersonalState {
 
     // only guarantees meaningful results at game end
     pub fn total_final_vp(&self) -> u32 {
-        self.count_card(CardType::Province) * 6 +
-        self.count_card(CardType::Duchy) * 3 +
-        self.count_card(CardType::Estate) * 1
+        self.count_card_static::<{CardType::Province as usize}>() * 6 +
+        self.count_card_static::<{CardType::Duchy as usize}>() * 3 +
+        self.count_card_static::<{CardType::Estate as usize}>() * 1
     }
 
     pub fn get_action(&self) -> u32 {
@@ -167,6 +167,10 @@ impl PersonalState {
 
     pub fn count_card(&self, c: CardType) -> u32 {
         self.deckStats[c as usize]
+    }
+
+    pub fn count_card_static<const C: usize>(&self) -> u32 {
+        self.deckStats[C]
     }
 }
 
