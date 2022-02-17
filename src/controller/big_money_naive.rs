@@ -13,9 +13,9 @@ pub struct BigMoneyController<K: kingdom::Kingdom, const N: usize> {
 }
 
 fn total_money<K: kingdom::Kingdom, const N: usize, const P: usize>(game: &mut game::Game<K, N>) -> u32 {
-    game.players[P].count_card(game::CardType::Gold) * 3 +
-    game.players[P].count_card(game::CardType::Silver) * 2 +
-    game.players[P].count_card(game::CardType::Copper) * 1
+    game.get_player::<P>().count_card(game::CardType::Gold) * 3 +
+    game.get_player::<P>().count_card(game::CardType::Silver) * 2 +
+    game.get_player::<P>().count_card(game::CardType::Copper) * 1
 }
 
 impl<K: kingdom::Kingdom, const N: usize> BigMoneyController<K, N> {
@@ -30,9 +30,9 @@ impl<K: kingdom::Kingdom, const N: usize> controller::Controller<K, N> for BigMo
     fn act(&mut self) {
     }
     fn buy<const P: usize>(&mut self, game: &mut game::Game<K, N>) {
-        while game.players[P].play_gold() {}
-        while game.players[P].play_silver() {}
-        while game.players[P].play_copper() {}
+        while game.get_player::<P>().play_gold() {}
+        while game.get_player::<P>().play_silver() {}
+        while game.get_player::<P>().play_copper() {}
         if total_money::<K, N, P>(game) > 18 && game.buy_province::<P>() {
             return;
         } else if game.buy_gold::<P>() {

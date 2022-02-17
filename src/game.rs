@@ -23,6 +23,7 @@ pub trait GameState {
     fn buy_estate<const P: usize>(&mut self) -> bool;
     fn buy_gold<const P: usize>(&mut self) -> bool;
     fn buy_silver<const P: usize>(&mut self) -> bool;
+    fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
     fn province_in_supply(&self) -> u32;
 }
 
@@ -36,7 +37,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     curse: u32,
 
     kingdom: PhantomData<K>,
-    pub players: [PersonalState; N],
+    players: [PersonalState; N],
     trash: Vec<CardType>,
 }
 
@@ -333,6 +334,10 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].coin -= 3;
         self.players[P].discard.push(CardType::Silver);
         true
+    }
+
+    fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
+        &mut self.players[P]
     }
 
     fn province_in_supply(&self) -> u32 {
