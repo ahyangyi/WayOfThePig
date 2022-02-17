@@ -8,8 +8,8 @@ fn main() {
     let mut w2 : u32 = 0;
     for _i in 0..200000 {
         let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
-        let mut p1 : big_money::BigMoneyController<kingdom::SimpleKingdom, 2> = big_money::BigMoneyController::make();
-        let mut p2 : big_money_naive::BigMoneyController<kingdom::SimpleKingdom, 2> = big_money_naive::BigMoneyController::make();
+        let mut p1 : big_money::BigMoneyController<game::Game<kingdom::SimpleKingdom, 2>> = big_money::BigMoneyController::make();
+        let mut p2 : big_money_naive::BigMoneyController<game::Game<kingdom::SimpleKingdom, 2>> = big_money_naive::BigMoneyController::make();
         let result = a.run(&mut p1, &mut p2);
         if result == [0, 1] {
             w1 += 1;

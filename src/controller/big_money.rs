@@ -12,32 +12,32 @@ use crate::controller;
 use crate::game::GameState;
 use std::marker::PhantomData;
 
-pub struct BigMoneyController<K: kingdom::Kingdom, const N: usize> {
-    kingdom: PhantomData<K>,
+pub struct BigMoneyController<G: game::GameState> {
+    game: PhantomData<G>,
 }
 
-fn total_money<K: kingdom::Kingdom, const N: usize, const P: usize>(game: &mut game::Game<K, N>) -> u32 {
+fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(game::CardType::Gold) * 3 +
     game.get_player::<P>().count_card(game::CardType::Silver) * 2 +
     game.get_player::<P>().count_card(game::CardType::Copper) * 1
 }
 
-impl<K: kingdom::Kingdom, const N: usize> BigMoneyController<K, N> {
-    pub fn make() -> BigMoneyController<K, N> {
+impl<G: game::GameState> BigMoneyController<G> {
+    pub fn make() -> BigMoneyController<G> {
         BigMoneyController {
-            kingdom: PhantomData,
+            game: PhantomData,
         }
     }
 }
 
-impl<K: kingdom::Kingdom, const N: usize> controller::Controller<K, N> for BigMoneyController<K, N> {
+impl<G: game::GameState> controller::Controller<G> for BigMoneyController<G> {
     fn act(&mut self) {
     }
-    fn buy<const P: usize>(&mut self, game: &mut game::Game<K, N>) {
+    fn buy<const P: usize>(&mut self, game: &mut G) {
         while game.get_player::<P>().play_gold() {}
         while game.get_player::<P>().play_silver() {}
         while game.get_player::<P>().play_copper() {}
-        if total_money::<K, N, P>(game) > 18 && game.buy_province::<P>() {
+        if total_money::<G, P>(game) > 18 && game.buy_province::<P>() {
             return;
         } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
             return;
