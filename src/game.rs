@@ -66,7 +66,7 @@ pub struct PersonalState {
     discard: Vec<CardType>,
     hand: [u32; 7],
     play: Vec<CardType>,
-    deckStats: [u32; 7],
+    deck_stats: [u32; 7],
     action: u32,
     buy: u32,
     coin: u32,
@@ -90,7 +90,7 @@ impl PersonalState {
             ],
             hand: [0; 7],
             play: vec![],
-            deckStats: [0, 0, 3, 0, 0, 7, 0],
+            deck_stats: [0, 0, 3, 0, 0, 7, 0],
             action: 0,
             buy: 0,
             coin: 0,
@@ -180,11 +180,11 @@ impl PersonalState {
     }
 
     pub fn count_card(&self, c: CardType) -> u32 {
-        self.deckStats[c as usize]
+        self.deck_stats[c as usize]
     }
 
     pub fn count_card_static<const C: usize>(&self) -> u32 {
-        self.deckStats[C]
+        self.deck_stats[C]
     }
 }
 
@@ -300,7 +300,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 8;
         self.players[P].discard.push(CardType::Province);
-        self.players[P].deckStats[CardType::Province as usize] += 1;
+        self.players[P].deck_stats[CardType::Province as usize] += 1;
         true
     }
 
@@ -312,7 +312,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 5;
         self.players[P].discard.push(CardType::Duchy);
-        self.players[P].deckStats[CardType::Duchy as usize] += 1;
+        self.players[P].deck_stats[CardType::Duchy as usize] += 1;
         true
     }
 
@@ -324,7 +324,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 2;
         self.players[P].discard.push(CardType::Estate);
-        self.players[P].deckStats[CardType::Estate as usize] += 1;
+        self.players[P].deck_stats[CardType::Estate as usize] += 1;
         true
     }
 
@@ -336,7 +336,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 6;
         self.players[P].discard.push(CardType::Gold);
-        self.players[P].deckStats[CardType::Gold as usize] += 1;
+        self.players[P].deck_stats[CardType::Gold as usize] += 1;
         true
     }
 
@@ -348,7 +348,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].buy -= 1;
         self.players[P].coin -= 3;
         self.players[P].discard.push(CardType::Silver);
-        self.players[P].deckStats[CardType::Silver as usize] += 1;
+        self.players[P].deck_stats[CardType::Silver as usize] += 1;
         true
     }
 

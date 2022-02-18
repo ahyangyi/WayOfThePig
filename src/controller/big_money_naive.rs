@@ -2,7 +2,6 @@
 //   Buy province if total money > 18
 //   Buy gold
 //   Buy silver
-use crate::kingdom;
 use crate::game;
 use crate::controller;
 use std::marker::PhantomData;

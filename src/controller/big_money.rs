@@ -6,7 +6,6 @@
 //   Buy gold
 //   Buy Duchy if remaining province <= 6
 //   Buy silver
-use crate::kingdom;
 use crate::game;
 use crate::controller;
 use std::marker::PhantomData;
