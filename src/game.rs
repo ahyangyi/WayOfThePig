@@ -9,6 +9,7 @@ use num_traits::FromPrimitive;
 
 #[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
 pub enum CardType {
+    // Base Cards
     Province,
     Duchy,
     Estate,
@@ -16,7 +17,24 @@ pub enum CardType {
     Silver,
     Copper,
     Curse,
+
+    // Base Set
     Village,
+    Militia,
+    Market,
+
+    // Intrigue
+    Upgrade,
+    Patrol,
+    Harem,
+
+    // Hinterland
+    Oasis,
+    SpiceMerchant,
+    Stables,
+
+    // Nocturne
+    FaithfulHound,
 }
 
 pub trait GameState {
