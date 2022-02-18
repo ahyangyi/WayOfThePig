@@ -1,5 +1,7 @@
 use bitflags::bitflags;
 pub mod province;
+pub mod duchy;
+pub mod estate;
 pub mod smithy;
 
 bitflags! {
