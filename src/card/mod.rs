@@ -2,6 +2,10 @@ use bitflags::bitflags;
 pub mod province;
 pub mod duchy;
 pub mod estate;
+pub mod gold;
+pub mod silver;
+pub mod copper;
+pub mod curse;
 pub mod smithy;
 
 bitflags! {
