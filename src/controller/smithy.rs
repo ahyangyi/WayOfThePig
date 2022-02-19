@@ -1,4 +1,4 @@
-// An implementation of DominionSim "Smithy", which attempts to buy the first
+// An implementation of DominionSim strategy "Smithy" by HiveMindEmulator, which attempts to buy the first
 // possible entry:
 //   Buy province if total money > 15
 //   Buy duchy if remaining province <= 4
