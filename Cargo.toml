@@ -1,12 +1,6 @@
-[package]
-name = "way-of-the-pig"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-bitflags = "1.3"
-rand = "0.8"
-num-traits = "0.2"
-num-derive = "0.3"
+members = [
+    "way_of_the_pig",
+    "way_of_the_pig_derive",
+]
