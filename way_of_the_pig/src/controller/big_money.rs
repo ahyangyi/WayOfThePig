@@ -1,10 +1,19 @@
-// An implementation of WanderingWinder's "Big Money Ultimate", which attempts to buy the first
-// possible entry:
+// An implementation of WanderingWinder's "Big Money Ultimate", which attempts to buy the first possible entry:
 //   Buy province if total money > 18
 //   Buy duchy if remaining province <= 4
 //   Buy estate if remaining province <= 2
 //   Buy gold
-//   Buy Duchy if remaining province <= 6
+//   Buy duchy if remaining province <= 6
+//   Buy silver
+// This implementation also supports the Colony variation, which is the following:
+//   Buy colony if total money > 32
+//   Buy province if remaining colony <= 6
+//   Buy duchy if remaining colony <= 5
+//   Buy estate if remaining colony <= 2
+//   Buy platinum
+//   Buy province if remaining colony <= 7
+//   Buy gold
+//   Buy duchy if remaining colony <= 6
 //   Buy silver
 use crate::game;
 use crate::controller;
