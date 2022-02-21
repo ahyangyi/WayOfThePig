@@ -241,7 +241,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         self.province_end() || self.colony_end() || self.pile_end()
     }
 
-    pub fn run<T1: controller::Controller<Game<K, N>>, T2: controller::Controller<Game<K, N>>>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
+    pub fn run<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
         for player in 0..2 {
             for _card in 0..5 {
                 self.players[player].draw();
@@ -251,14 +251,14 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         for _round in 1..100 {
             self.players[0].turn_start();
             t1.act();
-            t1.buy::<0>(self);
+            t1.buy::<Game<K, N>, 0>(self);
             if self.end() {
                 break;
             }
             self.players[0].clean_up();
             self.players[1].turn_start();
             t2.act();
-            t2.buy::<1>(self);
+            t2.buy::<Game<K, N>, 1>(self);
             if self.end() {
                 break_pos = 1;
                 break;
@@ -278,7 +278,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         }
     }
 
-    pub fn run_random<T1: controller::Controller<Game<K, N>>, T2: controller::Controller<Game<K, N>>>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
+    pub fn run_random<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
         let mut rng = rand::thread_rng();
         let scheme = rng.gen_range(0..2);
 

@@ -17,10 +17,8 @@
 //   Buy silver
 use crate::game;
 use crate::controller;
-use std::marker::PhantomData;
 
-pub struct BigMoneyController<G: game::GameState> {
-    game: PhantomData<G>,
+pub struct BigMoneyController {
 }
 
 fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
@@ -29,18 +27,16 @@ fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(game::CardType::Copper) * 1
 }
 
-impl<G: game::GameState> BigMoneyController<G> {
-    pub fn make() -> BigMoneyController<G> {
-        BigMoneyController {
-            game: PhantomData,
-        }
+impl BigMoneyController {
+    pub fn make() -> BigMoneyController{
+        BigMoneyController {}
     }
 }
 
-impl<G: game::GameState> controller::Controller<G> for BigMoneyController<G> {
+impl controller::Controller for BigMoneyController {
     fn act(&mut self) {
     }
-    fn buy<const P: usize>(&mut self, game: &mut G) {
+    fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
         while game.get_player::<P>().play_gold() {}
         while game.get_player::<P>().play_silver() {}
         while game.get_player::<P>().play_copper() {}
