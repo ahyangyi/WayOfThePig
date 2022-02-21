@@ -4,3 +4,7 @@ members = [
     "way_of_the_pig",
     "way_of_the_pig_derive",
 ]
+
+[profile.release]
+lto = true
+codegen-units = 4
