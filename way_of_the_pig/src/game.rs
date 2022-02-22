@@ -20,6 +20,7 @@ pub enum CardType {
 
     // Base Set
     Village,
+    Smithy,
     Militia,
     Market,
 
@@ -64,9 +65,9 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 pub struct PersonalState {
     deck: Vec<CardType>,
     discard: Vec<CardType>,
-    hand: [u32; 17],
+    hand: [u32; 18],
     play: Vec<CardType>,
-    deck_stats: [u32; 17],
+    deck_stats: [u32; 18],
     action: u32,
     buy: u32,
     coin: u32,
@@ -88,9 +89,9 @@ impl PersonalState {
                 CardType::Copper,
                 CardType::Copper,
             ],
-            hand: [0; 17],
+            hand: [0; 18],
             play: vec![],
-            deck_stats: [0, 0, 3, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            deck_stats: [0, 0, 3, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             action: 0,
             buy: 0,
             coin: 0,
@@ -116,7 +117,7 @@ impl PersonalState {
     }
 
     pub fn clean_up(&mut self) {
-        for i in 0..17 {
+        for i in 0..18 {
             for _j in 0..self.hand[i] {
                 self.discard.push(FromPrimitive::from_usize(i).unwrap());
             }
