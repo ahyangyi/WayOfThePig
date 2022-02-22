@@ -123,9 +123,7 @@ impl PersonalState {
             }
             self.hand[i] = 0;
         }
-        while self.play.len() > 0 {
-            self.discard.push(self.play.pop().unwrap());
-        }
+        self.discard.append(&mut self.play);
         for _card in 0..5 {
             self.draw();
         }
