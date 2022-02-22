@@ -25,3 +25,12 @@ fn impl_hello_macro(ast: &syn::DeriveInput) -> TokenStream {
     };
     gen.into()
 }
+
+#[proc_macro]
+pub fn static_matchmaker(_input: TokenStream) -> TokenStream {
+    let gen = quote! {
+        fn matchmake() {
+        }
+    };
+    gen.into()
+}
