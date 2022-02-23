@@ -37,7 +37,7 @@ impl<G: game::GameState> controller::Controller<G> for BigMoneyController<G> {
         while game.get_player::<P>().play_gold() {}
         while game.get_player::<P>().play_silver() {}
         while game.get_player::<P>().play_copper() {}
-        if total_money::<G, P>(game) > 18 && game.buy_province::<P>() {
+        if total_money::<G, P>(game) > 15 && game.buy_province::<P>() {
             return;
         } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
             return;
@@ -46,6 +46,8 @@ impl<G: game::GameState> controller::Controller<G> for BigMoneyController<G> {
         } else if game.buy_gold::<P>() {
             return;
         } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
+            return;
+        } else if game.buy_smithy::<P>() {
             return;
         } else {
             game.buy_silver::<P>();
