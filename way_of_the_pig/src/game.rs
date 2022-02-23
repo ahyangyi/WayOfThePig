@@ -17,7 +17,7 @@ macro_rules! default_buy {
             self.$n -= 1;
             self.players[P].buy -= 1;
             self.players[P].coin -= 3;
-            self.players[P].discard.push(CardType::$N);
+            self.players[P].gain(CardType::$N);
             self.players[P].deck_stats[CardType::$N as usize] += 1;
             true
         }
@@ -125,16 +125,26 @@ impl PersonalState {
         }
     }
 
-    pub fn draw(&mut self) {
+    #[inline]
+    pub fn draw_to(&mut self) -> Option<CardType> {
         if self.deck.len() == 0 {
             self.discard.shuffle(&mut thread_rng());
             mem::swap(&mut self.deck, &mut self.discard);
         }
-        let card = self.deck.pop();
+        self.deck.pop()
+    }
+
+    pub fn draw(&mut self) {
+        let card = self.draw_to();
         match card {
             None => {},
             Some(x) => {self.hand[x as usize] += 1;}
         }
+    }
+
+    #[inline]
+    pub fn gain(&mut self, c: CardType) {
+        self.discard.push(c);
     }
 
     pub fn turn_start(&mut self) {
@@ -192,6 +202,18 @@ impl PersonalState {
         }
         self.hand[CardType::Smithy as usize] -= 1;
         self.play.push(CardType::Smithy);
+        self.draw();
+        self.draw();
+        self.draw();
+        true
+    }
+
+    pub fn play_patrol(&mut self) -> bool {
+        if self.hand[CardType::Patrol as usize] == 0 || self.action == 0 {
+            return false;
+        }
+        self.hand[CardType::Patrol as usize] -= 1;
+        self.play.push(CardType::Patrol);
         self.draw();
         self.draw();
         self.draw();
