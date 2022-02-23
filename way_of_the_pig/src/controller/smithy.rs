@@ -22,6 +22,12 @@ fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(game::CardType::Copper) * 1
 }
 
+fn num_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
+    game.get_player::<P>().count_card(game::CardType::Gold) +
+    game.get_player::<P>().count_card(game::CardType::Silver) +
+    game.get_player::<P>().count_card(game::CardType::Copper)
+}
+
 impl<G: game::GameState> BigMoneyController<G> {
     pub fn make() -> BigMoneyController<G> {
         BigMoneyController {
@@ -47,7 +53,7 @@ impl<G: game::GameState> controller::Controller<G> for BigMoneyController<G> {
             return;
         } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
             return;
-        } else if game.buy_smithy::<P>() {
+        } else if game.get_player::<P>().count_card(game::CardType::Smithy) < num_money::<G, P>(game) / 11 && game.buy_smithy::<P>() {
             return;
         } else {
             game.buy_silver::<P>();
