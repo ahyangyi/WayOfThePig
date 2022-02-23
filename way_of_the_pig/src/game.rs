@@ -162,6 +162,18 @@ impl PersonalState {
         true
     }
 
+    pub fn play_smithy(&mut self) -> bool {
+        if self.hand[CardType::Smithy as usize] == 0 || self.action == 0 {
+            return false;
+        }
+        self.hand[CardType::Smithy as usize] -= 1;
+        self.play.push(CardType::Smithy);
+        self.draw();
+        self.draw();
+        self.draw();
+        true
+    }
+
     // only guarantees meaningful results at game end
     pub fn total_final_vp(&self) -> u32 {
         self.count_card_static::<{CardType::Province as usize}>() * 6 +
@@ -253,14 +265,14 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         let mut break_pos : u32 = 0;
         for _round in 1..100 {
             self.players[0].turn_start();
-            t1.act();
+            t1.act::<Game<K, N>, 0>(self);
             t1.buy::<Game<K, N>, 0>(self);
             if self.end() {
                 break;
             }
             self.players[0].clean_up();
             self.players[1].turn_start();
-            t2.act();
+            t2.act::<Game<K, N>, 1>(self);
             t2.buy::<Game<K, N>, 1>(self);
             if self.end() {
                 break_pos = 1;

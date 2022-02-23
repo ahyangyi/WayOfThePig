@@ -32,7 +32,8 @@ impl BigMoneyController {
 }
 
 impl controller::Controller for BigMoneyController {
-    fn act(&mut self) {
+    fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
+        game.get_player::<P>().play_smithy();
     }
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
         while game.get_player::<P>().play_gold() {}
