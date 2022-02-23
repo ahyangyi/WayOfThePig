@@ -7,6 +7,24 @@ use rand::seq::SliceRandom;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
+#[macro_export]
+macro_rules! default_buy {
+    ( $n:ident, $N:ident, $f:ident, $p:expr ) => {
+        fn $f<const P: usize>(&mut self) -> bool {
+            if self.$n == 0 || self.players[P].buy == 0 || self.players[P].coin < $p {
+                return false;
+            }
+            self.$n -= 1;
+            self.players[P].buy -= 1;
+            self.players[P].coin -= 3;
+            self.players[P].discard.push(CardType::$N);
+            self.players[P].deck_stats[CardType::$N as usize] += 1;
+            true
+        }
+    };
+}
+
+
 #[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
 pub enum CardType {
     // Base Cards
@@ -307,77 +325,12 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 }
 
 impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
-    fn buy_province<const P: usize>(&mut self) -> bool {
-        if self.province == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
-            return false;
-        }
-        self.province -= 1;
-        self.players[P].buy -= 1;
-        self.players[P].coin -= 8;
-        self.players[P].discard.push(CardType::Province);
-        self.players[P].deck_stats[CardType::Province as usize] += 1;
-        true
-    }
-
-    fn buy_duchy<const P: usize>(&mut self) -> bool {
-        if self.duchy == 0 || self.players[P].buy == 0 || self.players[P].coin < 5 {
-            return false;
-        }
-        self.duchy -= 1;
-        self.players[P].buy -= 1;
-        self.players[P].coin -= 5;
-        self.players[P].discard.push(CardType::Duchy);
-        self.players[P].deck_stats[CardType::Duchy as usize] += 1;
-        true
-    }
-
-    fn buy_estate<const P: usize>(&mut self) -> bool {
-        if self.estate == 0 || self.players[P].buy == 0 || self.players[P].coin < 2 {
-            return false;
-        }
-        self.estate -= 1;
-        self.players[P].buy -= 1;
-        self.players[P].coin -= 2;
-        self.players[P].discard.push(CardType::Estate);
-        self.players[P].deck_stats[CardType::Estate as usize] += 1;
-        true
-    }
-
-    fn buy_gold<const P: usize>(&mut self) -> bool {
-        if self.gold == 0 || self.players[P].buy == 0 || self.players[P].coin < 6 {
-            return false;
-        }
-        self.gold -= 1;
-        self.players[P].buy -= 1;
-        self.players[P].coin -= 6;
-        self.players[P].discard.push(CardType::Gold);
-        self.players[P].deck_stats[CardType::Gold as usize] += 1;
-        true
-    }
-
-    fn buy_silver<const P: usize>(&mut self) -> bool {
-        if self.silver == 0 || self.players[P].buy == 0 || self.players[P].coin < 3 {
-            return false;
-        }
-        self.silver -= 1;
-        self.players[P].buy -= 1;
-        self.players[P].coin -= 3;
-        self.players[P].discard.push(CardType::Silver);
-        self.players[P].deck_stats[CardType::Silver as usize] += 1;
-        true
-    }
-
-    fn buy_smithy<const P: usize>(&mut self) -> bool {
-        if self.smithy == 0 || self.players[P].buy == 0 || self.players[P].coin < 4 {
-            return false;
-        }
-        self.smithy -= 1;
-        self.players[P].buy -= 1;
-        self.players[P].coin -= 3;
-        self.players[P].discard.push(CardType::Smithy);
-        self.players[P].deck_stats[CardType::Smithy as usize] += 1;
-        true
-    }
+    default_buy!(province, Province, buy_province, 8);
+    default_buy!(duchy, Duchy, buy_duchy, 5);
+    default_buy!(estate, Estate, buy_estate, 2);
+    default_buy!(gold, Gold, buy_gold, 6);
+    default_buy!(silver, Silver, buy_silver, 3);
+    default_buy!(smithy, Smithy, buy_smithy, 4);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]
