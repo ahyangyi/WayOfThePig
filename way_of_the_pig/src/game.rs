@@ -57,14 +57,19 @@ pub enum CardType {
 }
 
 pub trait GameState {
+    // buy APIs
     fn buy_province<const P: usize>(&mut self) -> bool;
     fn buy_duchy<const P: usize>(&mut self) -> bool;
     fn buy_estate<const P: usize>(&mut self) -> bool;
     fn buy_gold<const P: usize>(&mut self) -> bool;
     fn buy_silver<const P: usize>(&mut self) -> bool;
     fn buy_smithy<const P: usize>(&mut self) -> bool;
-    fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
+    fn buy_patrol<const P: usize>(&mut self) -> bool;
+
+    // supply inspection
     fn province_in_supply(&self) -> u32;
+
+    fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
 }
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
@@ -77,6 +82,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     curse: u32,
 
     smithy: u32,
+    patrol: u32,
 
     kingdom: PhantomData<K>,
     players: [PersonalState; N],
@@ -232,6 +238,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             copper: 46,
             curse: 10,
             smithy: 10,
+            patrol: 10,
             kingdom: PhantomData,
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
@@ -331,6 +338,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     default_buy!(gold, Gold, buy_gold, 6);
     default_buy!(silver, Silver, buy_silver, 3);
     default_buy!(smithy, Smithy, buy_smithy, 4);
+    default_buy!(patrol, Patrol, buy_patrol, 5);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]
