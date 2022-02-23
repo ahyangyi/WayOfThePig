@@ -44,6 +44,7 @@ pub trait GameState {
     fn buy_estate<const P: usize>(&mut self) -> bool;
     fn buy_gold<const P: usize>(&mut self) -> bool;
     fn buy_silver<const P: usize>(&mut self) -> bool;
+    fn buy_smithy<const P: usize>(&mut self) -> bool;
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
     fn province_in_supply(&self) -> u32;
 }
@@ -56,6 +57,8 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     silver: u32,
     copper: u32,
     curse: u32,
+
+    smithy: u32,
 
     kingdom: PhantomData<K>,
     players: [PersonalState; N],
@@ -198,6 +201,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             silver: 40,
             copper: 46,
             curse: 10,
+            smithy: 10,
             kingdom: PhantomData,
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
@@ -348,6 +352,18 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         self.players[P].coin -= 3;
         self.players[P].discard.push(CardType::Silver);
         self.players[P].deck_stats[CardType::Silver as usize] += 1;
+        true
+    }
+
+    fn buy_smithy<const P: usize>(&mut self) -> bool {
+        if self.smithy == 0 || self.players[P].buy == 0 || self.players[P].coin < 4 {
+            return false;
+        }
+        self.smithy -= 1;
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 3;
+        self.players[P].discard.push(CardType::Smithy);
+        self.players[P].deck_stats[CardType::Smithy as usize] += 1;
         true
     }
 
