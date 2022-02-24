@@ -9,16 +9,16 @@ use num_traits::FromPrimitive;
 
 #[macro_export]
 macro_rules! default_buy {
-    ( $n:ident, $N:ident, $f:ident, $p:expr ) => {
+    ( $pile:ident, $card:ident, $f:ident, $p:expr ) => {
         fn $f<const P: usize>(&mut self) -> bool {
-            if self.$n == 0 || self.players[P].buy == 0 || self.players[P].coin < $p {
+            if self.$pile == 0 || self.players[P].buy == 0 || self.players[P].coin < $p {
                 return false;
             }
-            self.$n -= 1;
+            self.$pile -= 1;
             self.players[P].buy -= 1;
             self.players[P].coin -= $p;
-            self.players[P].gain(CardType::$N);
-            self.players[P].deck_stats[CardType::$N as usize] += 1;
+            self.players[P].gain(CardType::$card);
+            self.players[P].deck_stats[CardType::$card as usize] += 1;
             true
         }
     };
