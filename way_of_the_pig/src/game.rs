@@ -261,6 +261,9 @@ impl PersonalState {
                 }
             }
         }
+
+        // FIXME: let the player to decide the order
+        self.deck.append(&mut m);
         true
     }
 
