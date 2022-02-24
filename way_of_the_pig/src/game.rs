@@ -8,7 +8,7 @@ use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
 #[macro_export]
-macro_rules! default_buy {
+macro_rules! make_simple_pile {
     ( $pile:ident, $card:ident, $f:ident, $p:expr ) => {
         fn $f<const P: usize>(&mut self) -> bool {
             if self.$pile == 0 || self.players[P].buy == 0 || self.players[P].coin < $p {
@@ -404,19 +404,19 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 }
 
 impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
-    default_buy!(province, Province, buy_province, 8);
-    default_buy!(duchy, Duchy, buy_duchy, 5);
-    default_buy!(estate, Estate, buy_estate, 2);
-    default_buy!(gold, Gold, buy_gold, 6);
-    default_buy!(silver, Silver, buy_silver, 3);
-    default_buy!(copper, Copper, buy_copper, 0);
-    default_buy!(curse, Curse, buy_curse, 0);
+    make_simple_pile!(province, Province, buy_province, 8);
+    make_simple_pile!(duchy, Duchy, buy_duchy, 5);
+    make_simple_pile!(estate, Estate, buy_estate, 2);
+    make_simple_pile!(gold, Gold, buy_gold, 6);
+    make_simple_pile!(silver, Silver, buy_silver, 3);
+    make_simple_pile!(copper, Copper, buy_copper, 0);
+    make_simple_pile!(curse, Curse, buy_curse, 0);
 
-    default_buy!(colony, Colony, buy_colony, 11);
-    default_buy!(platinum, Platinum, buy_platinum, 9);
+    make_simple_pile!(colony, Colony, buy_colony, 11);
+    make_simple_pile!(platinum, Platinum, buy_platinum, 9);
 
-    default_buy!(smithy, Smithy, buy_smithy, 4);
-    default_buy!(patrol, Patrol, buy_patrol, 5);
+    make_simple_pile!(smithy, Smithy, buy_smithy, 4);
+    make_simple_pile!(patrol, Patrol, buy_patrol, 5);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]
