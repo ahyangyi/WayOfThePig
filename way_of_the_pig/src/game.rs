@@ -16,7 +16,7 @@ macro_rules! default_buy {
             }
             self.$n -= 1;
             self.players[P].buy -= 1;
-            self.players[P].coin -= 3;
+            self.players[P].coin -= $p;
             self.players[P].gain(CardType::$N);
             self.players[P].deck_stats[CardType::$N as usize] += 1;
             true
