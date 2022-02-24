@@ -36,6 +36,10 @@ pub enum CardType {
     Copper,
     Curse,
 
+    // Colony
+    Colony,
+    Platinum,
+
     // Base Set
     Village,
     Smithy,
@@ -56,6 +60,8 @@ pub enum CardType {
     FaithfulHound,
 }
 
+const CARDTYPES : usize = 20;
+
 pub trait GameState {
     // buy APIs
     fn buy_province<const P: usize>(&mut self) -> bool;
@@ -63,6 +69,12 @@ pub trait GameState {
     fn buy_estate<const P: usize>(&mut self) -> bool;
     fn buy_gold<const P: usize>(&mut self) -> bool;
     fn buy_silver<const P: usize>(&mut self) -> bool;
+    fn buy_copper<const P: usize>(&mut self) -> bool;
+    fn buy_curse<const P: usize>(&mut self) -> bool;
+
+    fn buy_colony<const P: usize>(&mut self) -> bool;
+    fn buy_platinum<const P: usize>(&mut self) -> bool;
+
     fn buy_smithy<const P: usize>(&mut self) -> bool;
     fn buy_patrol<const P: usize>(&mut self) -> bool;
 
@@ -81,6 +93,9 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     copper: u32,
     curse: u32,
 
+    colony: u32,
+    platinum: u32,
+
     smithy: u32,
     patrol: u32,
 
@@ -92,9 +107,9 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 pub struct PersonalState {
     deck: Vec<CardType>,
     discard: Vec<CardType>,
-    hand: [u32; 18],
+    hand: [u32; CARDTYPES],
     play: Vec<CardType>,
-    deck_stats: [u32; 18],
+    deck_stats: [u32; CARDTYPES],
     action: u32,
     buy: u32,
     coin: u32,
@@ -102,7 +117,7 @@ pub struct PersonalState {
 
 impl PersonalState {
     pub fn make() -> PersonalState {
-        PersonalState {
+        let mut ret = PersonalState {
             deck: vec![],
             discard: vec![
                 CardType::Estate,
@@ -116,13 +131,16 @@ impl PersonalState {
                 CardType::Copper,
                 CardType::Copper,
             ],
-            hand: [0; 18],
+            hand: [0; CARDTYPES],
             play: vec![],
-            deck_stats: [0, 0, 3, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            deck_stats: [0; CARDTYPES],
             action: 0,
             buy: 0,
             coin: 0,
-        }
+        };
+        ret.deck_stats[CardType::Copper as usize] = 7;
+        ret.deck_stats[CardType::Estate as usize] = 3;
+        ret
     }
 
     #[inline]
@@ -154,7 +172,7 @@ impl PersonalState {
     }
 
     pub fn clean_up(&mut self) {
-        for i in 0..18 {
+        for i in 0..CARDTYPES {
             for _j in 0..self.hand[i] {
                 self.discard.push(FromPrimitive::from_usize(i).unwrap());
             }
@@ -274,6 +292,8 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             silver: 40,
             copper: 46,
             curse: 10,
+            colony: green_count,
+            platinum: 20,
             smithy: 10,
             patrol: 10,
             kingdom: PhantomData,
@@ -374,6 +394,12 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     default_buy!(estate, Estate, buy_estate, 2);
     default_buy!(gold, Gold, buy_gold, 6);
     default_buy!(silver, Silver, buy_silver, 3);
+    default_buy!(copper, Copper, buy_copper, 0);
+    default_buy!(curse, Curse, buy_curse, 0);
+
+    default_buy!(colony, Colony, buy_colony, 11);
+    default_buy!(platinum, Platinum, buy_platinum, 8);
+
     default_buy!(smithy, Smithy, buy_smithy, 4);
     default_buy!(patrol, Patrol, buy_patrol, 5);
 
