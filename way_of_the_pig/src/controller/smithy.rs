@@ -49,7 +49,7 @@ impl controller::Controller for BigMoneyController {
             return;
         } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
             return;
-        } else if game.get_player::<P>().count_card(game::CardType::Smithy) < num_money::<G, P>(game) / 11 && game.buy_smithy::<P>() {
+        } else if game.get_player::<P>().count_card(game::CardType::Smithy) * 11 < num_money::<G, P>(game) && game.buy_smithy::<P>() {
             return;
         } else {
             game.buy_silver::<P>();
