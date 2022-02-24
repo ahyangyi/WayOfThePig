@@ -21,20 +21,27 @@ macro_rules! round_robin {
 }
 
 fn main() {
-    let mut w1 : u32 = 0;
-    let mut w2 : u32 = 0;
-    for _i in 0..200000 {
+    let mut w : u32 = 0;
+    let mut p1 : big_money::BigMoneyController = big_money::BigMoneyController::make();
+    let mut p2 : smithy::BigMoneyController = smithy::BigMoneyController::make();
+    //round_robin!(a; p1, p2);
+    for _i in 0..100000 {
         let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
-        let mut p1 : big_money::BigMoneyController = big_money::BigMoneyController::make();
-        let mut p2 : smithy::BigMoneyController = smithy::BigMoneyController::make();
-        //round_robin!(a; p1, p2);
-        let result = a.run_random(&mut p1, &mut p2);
+        let result = a.run(&mut p1, &mut p2);
         if result == [0, 1] {
-            w1 += 1;
-        }
-        if result == [1, 0] {
-            w2 += 1;
+            w += 2;
+        } else if result == [0, 0] {
+            w += 1;
         }
     }
-    println!("p1 wins {}, p2 wins {}, draw {}", w1, w2, 200000 - w1 - w2);
+    for _i in 0..100000 {
+        let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
+        let result = a.run(&mut p2, &mut p1);
+        if result == [1, 0] {
+            w += 2;
+        } else if result == [0, 0] {
+            w += 1;
+        }
+    }
+    println!("{} - {}", w, 400000 - w);
 }
