@@ -194,6 +194,16 @@ impl PersonalState {
         true
     }
 
+    pub fn play_platinum(&mut self) -> bool {
+        if self.hand[CardType::Platinum as usize] == 0 {
+            return false;
+        }
+        self.hand[CardType::Platinum as usize] -= 1;
+        self.play.push(CardType::Platinum);
+        self.coin += 5;
+        true
+    }
+
     pub fn play_silver(&mut self) -> bool {
         if self.hand[CardType::Silver as usize] == 0 {
             return false;

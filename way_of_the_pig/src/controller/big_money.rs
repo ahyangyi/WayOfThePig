@@ -36,21 +36,38 @@ impl BigMoneyController {
 impl controller::Controller for BigMoneyController {
     fn act<G: game::GameState, const P: usize>(&mut self, _game: &mut G) {}
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
+        while game.get_player::<P>().play_platinum() {}
         while game.get_player::<P>().play_gold() {}
         while game.get_player::<P>().play_silver() {}
         while game.get_player::<P>().play_copper() {}
-        if total_money::<G, P>(game) > 18 && game.buy_province::<P>() {
-            return;
-        } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
-            return;
-        } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
-            return;
-        } else if game.buy_gold::<P>() {
-            return;
-        } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
-            return;
+        if false {
+            if total_money::<G, P>(game) > 32 && game.buy_colony::<P>() {
+                return;
+            } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
+                return;
+            } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
+                return;
+            } else if game.buy_gold::<P>() {
+                return;
+            } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
+                return;
+            } else {
+                game.buy_silver::<P>();
+            }
         } else {
-            game.buy_silver::<P>();
+            if total_money::<G, P>(game) > 18 && game.buy_province::<P>() {
+                return;
+            } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
+                return;
+            } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
+                return;
+            } else if game.buy_gold::<P>() {
+                return;
+            } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
+                return;
+            } else {
+                game.buy_silver::<P>();
+            }
         }
     }
 }
