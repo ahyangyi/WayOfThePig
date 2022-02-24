@@ -40,16 +40,22 @@ impl controller::Controller for BigMoneyController {
         while game.get_player::<P>().play_gold() {}
         while game.get_player::<P>().play_silver() {}
         while game.get_player::<P>().play_copper() {}
-        if false {
+        if true {
             if total_money::<G, P>(game) > 32 && game.buy_colony::<P>() {
                 return;
-            } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
+            } else if game.colony_in_supply() <= 6 && game.buy_province::<P>() {
                 return;
-            } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
+            } else if game.colony_in_supply() <= 5 && game.buy_duchy::<P>() {
+                return;
+            } else if game.colony_in_supply() <= 2 && game.buy_estate::<P>() {
+                return;
+            } else if game.buy_platinum::<P>() {
+                return;
+            } else if game.colony_in_supply() <= 7 && game.buy_province::<P>() {
                 return;
             } else if game.buy_gold::<P>() {
                 return;
-            } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
+            } else if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
             } else {
                 game.buy_silver::<P>();

@@ -80,6 +80,7 @@ pub trait GameState {
 
     // supply inspection
     fn province_in_supply(&self) -> u32;
+    fn colony_in_supply(&self) -> u32;
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
 }
@@ -265,6 +266,7 @@ impl PersonalState {
 
     // only guarantees meaningful results at game end
     pub fn total_final_vp(&self) -> u32 {
+        self.count_card_static::<{CardType::Colony as usize}>() * 10 +
         self.count_card_static::<{CardType::Province as usize}>() * 6 +
         self.count_card_static::<{CardType::Duchy as usize}>() * 3 +
         self.count_card_static::<{CardType::Estate as usize}>() * 1
@@ -408,7 +410,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     default_buy!(curse, Curse, buy_curse, 0);
 
     default_buy!(colony, Colony, buy_colony, 11);
-    default_buy!(platinum, Platinum, buy_platinum, 8);
+    default_buy!(platinum, Platinum, buy_platinum, 9);
 
     default_buy!(smithy, Smithy, buy_smithy, 4);
     default_buy!(patrol, Patrol, buy_patrol, 5);
@@ -419,5 +421,9 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
 
     fn province_in_supply(&self) -> u32 {
         self.province
+    }
+
+    fn colony_in_supply(&self) -> u32 {
+        self.colony
     }
 }
