@@ -217,6 +217,21 @@ impl PersonalState {
         self.draw();
         self.draw();
         self.draw();
+
+        let mut m : Vec<CardType> = vec![];
+        for _i in 0..4 {
+            let card = self.draw_to();
+            match card {
+                None => {break;},
+                Some(x) => {
+                    if x == CardType::Province || x == CardType::Duchy || x == CardType::Estate {
+                        self.hand[x as usize] += 1;
+                    } else {
+                        m.push(x);
+                    }
+                }
+            }
+        }
         true
     }
 
