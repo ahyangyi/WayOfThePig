@@ -308,7 +308,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             copper: 46,
             curse: 10,
             colony: green_count,
-            platinum: 20,
+            platinum: 12,
             smithy: 10,
             patrol: 10,
             kingdom: PhantomData,
