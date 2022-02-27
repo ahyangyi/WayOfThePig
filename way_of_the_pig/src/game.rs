@@ -27,7 +27,7 @@ macro_rules! make_simple_pile {
 }
 
 macro_rules! make_simple_buy_fn {
-    ( $pile:ident, $card:ident, $f:ident, $p:expr ) => {
+    ( $pile:ident, $f:ident, $p:expr ) => {
         fn $f<const P: usize>(&mut self) -> bool {
             if !self.$pile.enabled() ||
                 self.$pile.remaining_cards() == 0 ||
@@ -35,11 +35,12 @@ macro_rules! make_simple_buy_fn {
                 self.players[P].coin < $p {
                 return false;
             }
+            let card = self.$pile.top();
             self.$pile.pop();
             self.players[P].buy -= 1;
             self.players[P].coin -= 8;
-            self.players[P].gain(CardType::$card);
-            self.players[P].deck_stats[CardType::$card as usize] += 1;
+            self.players[P].gain(card);
+            self.players[P].deck_stats[card as usize] += 1;
             true
         }
     };
@@ -425,7 +426,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 }
 
 impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
-    make_simple_buy_fn!(province, Province, buy_province, 8);
+    make_simple_buy_fn!(province, buy_province, 8);
     make_simple_pile!(duchy, Duchy, buy_duchy, 5);
     make_simple_pile!(estate, Estate, buy_estate, 2);
     make_simple_pile!(gold, Gold, buy_gold, 6);

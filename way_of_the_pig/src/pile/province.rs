@@ -1,4 +1,5 @@
 use crate::pile;
+use crate::game;
 
 pub struct Pile {
     province: u8,
@@ -16,6 +17,11 @@ impl pile::Pile for Pile {
     #[inline]
     fn enabled(&self) -> bool {
         true
+    }
+
+    #[inline]
+    fn top(&mut self) -> game::CardType {
+        game::CardType::Province
     }
 
     #[inline]
