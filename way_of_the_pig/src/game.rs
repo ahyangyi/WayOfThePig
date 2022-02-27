@@ -79,26 +79,26 @@ pub trait GameState {
     fn buy_patrol<const P: usize>(&mut self) -> bool;
 
     // supply inspection
-    fn province_in_supply(&self) -> u32;
-    fn colony_in_supply(&self) -> u32;
+    fn province_in_supply(&self) -> u8;
+    fn colony_in_supply(&self) -> u8;
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
 }
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
-    province: u32,
-    duchy: u32,
-    estate: u32,
-    gold: u32,
-    silver: u32,
-    copper: u32,
-    curse: u32,
+    province: u8,
+    duchy: u8,
+    estate: u8,
+    gold: u8,
+    silver: u8,
+    copper: u8,
+    curse: u8,
 
-    colony: u32,
-    platinum: u32,
+    colony: u8,
+    platinum: u8,
 
-    smithy: u32,
-    patrol: u32,
+    smithy: u8,
+    patrol: u8,
 
     kingdom: PhantomData<K>,
     players: [PersonalState; N],
@@ -422,11 +422,11 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         &mut self.players[P]
     }
 
-    fn province_in_supply(&self) -> u32 {
+    fn province_in_supply(&self) -> u8 {
         self.province
     }
 
-    fn colony_in_supply(&self) -> u32 {
+    fn colony_in_supply(&self) -> u8 {
         self.colony
     }
 }
