@@ -25,10 +25,12 @@ impl pile::Pile for Pile {
     }
 
     #[inline]
-    fn pop(&mut self) {
-        if self.province > 0 {
-            self.province -= 1
+    fn pop(&mut self) -> Option<game::CardType> {
+        if self.province == 0 {
+            return None;
         }
+        self.province -= 1;
+        Some(game::CardType::Province)
     }
 
     #[inline]
