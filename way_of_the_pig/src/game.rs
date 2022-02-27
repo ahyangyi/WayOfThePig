@@ -30,18 +30,22 @@ macro_rules! make_simple_buy_fn {
     ( $pile:ident, $f:ident, $p:expr ) => {
         fn $f<const P: usize>(&mut self) -> bool {
             if !self.$pile.enabled() ||
-                self.$pile.remaining_cards() == 0 ||
                 self.players[P].buy == 0 ||
                 self.players[P].coin < $p {
                 return false;
             }
             let card = self.$pile.top();
-            self.$pile.pop();
-            self.players[P].buy -= 1;
-            self.players[P].coin -= 8;
-            self.players[P].gain(card);
-            self.players[P].deck_stats[card as usize] += 1;
-            true
+            match card {
+                None => false,
+                Some(x) => {
+                    self.$pile.pop();
+                    self.players[P].buy -= 1;
+                    self.players[P].coin -= 8;
+                    self.players[P].gain(x);
+                    self.players[P].deck_stats[x as usize] += 1;
+                    true
+                }
+            }
         }
     };
 }

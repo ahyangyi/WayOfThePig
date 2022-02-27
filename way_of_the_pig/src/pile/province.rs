@@ -20,8 +20,11 @@ impl pile::Pile for Pile {
     }
 
     #[inline]
-    fn top(&mut self) -> game::CardType {
-        game::CardType::Province
+    fn top(&self) -> Option<game::CardType> {
+        if self.province == 0 {
+            return None;
+        }
+        Some(game::CardType::Province)
     }
 
     #[inline]
