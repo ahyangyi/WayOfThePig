@@ -1,5 +1,7 @@
 use crate::kingdom;
 use crate::controller;
+use crate::pile;
+use crate::pile::Pile;
 use std::marker::PhantomData;
 use std::mem;
 use rand::{thread_rng, Rng};
@@ -86,7 +88,7 @@ pub trait GameState {
 }
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
-    province: u8,
+    province: pile::province::Pile,
     duchy: u8,
     estate: u8,
     gold: u8,
@@ -300,7 +302,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     pub fn make() -> Game<K, N> {
         let green_count = if N > 2 {12} else {8};
         let ret: Game<K, N> = Game {
-            province: green_count,
+            province: pile::province::Pile::make(),
             duchy: green_count,
             estate: green_count,
             gold: 30,
@@ -319,7 +321,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     }
 
     fn province_end(&self) -> bool {
-        self.province == 0
+        self.province_in_supply() == 0
     }
     
     fn colony_end(&self) -> bool {
@@ -404,7 +406,18 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 }
 
 impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
-    make_simple_pile!(province, Province, buy_province, 8);
+    //make_simple_pile!(province, Province, buy_province, 8);
+    fn buy_province<const P: usize>(&mut self) -> bool {
+        if self.province.remaining_cards() == 0 || self.players[P].buy == 0 || self.players[P].coin < 8 {
+            return false;
+        }
+        self.province.pop();
+        self.players[P].buy -= 1;
+        self.players[P].coin -= 8;
+        self.players[P].gain(CardType::Province);
+        self.players[P].deck_stats[CardType::Province as usize] += 1;
+        true
+    }
     make_simple_pile!(duchy, Duchy, buy_duchy, 5);
     make_simple_pile!(estate, Estate, buy_estate, 2);
     make_simple_pile!(gold, Gold, buy_gold, 6);
@@ -423,7 +436,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     }
 
     fn province_in_supply(&self) -> u8 {
-        self.province
+        self.province.remaining_cards()
     }
 
     fn colony_in_supply(&self) -> u8 {
