@@ -1,5 +1,5 @@
+use crate::card;
 use crate::pile;
-use crate::game;
 
 pub struct Pile {
 }
@@ -16,12 +16,12 @@ impl pile::Pile for Pile {
     }
 
     #[inline]
-    fn top(&self) -> Option<game::CardType> {
+    fn top(&self) -> Option<card::CardType> {
         return None;
     }
 
     #[inline]
-    fn pop(&mut self) -> Option<game::CardType> {
+    fn pop(&mut self) -> Option<card::CardType> {
         return None;
     }
 

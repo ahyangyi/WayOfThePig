@@ -3,12 +3,11 @@ use crate::controller;
 use crate::pile;
 use crate::pile::Pile;
 use crate::card;
-use crate::card::Card;
+use crate::card::{Card, CardType};
 use std::marker::PhantomData;
 use std::mem;
 use rand::{thread_rng, Rng};
 use rand::seq::SliceRandom;
-use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
 macro_rules! make_simple_buy_fn {
@@ -49,46 +48,6 @@ macro_rules! make_simple_play_fn {
     };
 }
 
-
-#[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
-pub enum CardType {
-    // Base Cards
-    Province,
-    Duchy,
-    Estate,
-    Gold,
-    Silver,
-    Copper,
-    Curse,
-
-    // Colony
-    Colony,
-    Platinum,
-
-    // Shelter
-    OvergrownEstate,
-    Hovel,
-    Necropolis,
-
-    // Base Set
-    Village,
-    Smithy,
-    Militia,
-    Market,
-
-    // Intrigue
-    Upgrade,
-    Patrol,
-    Harem,
-
-    // Hinterland
-    Oasis,
-    SpiceMerchant,
-    Stables,
-
-    // Nocturne
-    FaithfulHound,
-}
 
 const CARDTYPES : usize = 23;
 

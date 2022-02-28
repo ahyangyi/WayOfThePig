@@ -7,6 +7,7 @@
 //   Buy Duchy if remaining province <= 6
 //   Buy Smithy if #smithy < #treasure / 11
 //   Buy silver
+use crate::card;
 use crate::game;
 use crate::controller;
 
@@ -14,15 +15,15 @@ pub struct BigMoneyController {
 }
 
 fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
-    game.get_player::<P>().count_card(game::CardType::Gold) * 3 +
-    game.get_player::<P>().count_card(game::CardType::Silver) * 2 +
-    game.get_player::<P>().count_card(game::CardType::Copper) * 1
+    game.get_player::<P>().count_card(card::CardType::Gold) * 3 +
+    game.get_player::<P>().count_card(card::CardType::Silver) * 2 +
+    game.get_player::<P>().count_card(card::CardType::Copper) * 1
 }
 
 fn num_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
-    game.get_player::<P>().count_card(game::CardType::Gold) +
-    game.get_player::<P>().count_card(game::CardType::Silver) +
-    game.get_player::<P>().count_card(game::CardType::Copper)
+    game.get_player::<P>().count_card(card::CardType::Gold) +
+    game.get_player::<P>().count_card(card::CardType::Silver) +
+    game.get_player::<P>().count_card(card::CardType::Copper)
 }
 
 impl BigMoneyController {
@@ -49,7 +50,7 @@ impl controller::Controller for BigMoneyController {
             return;
         } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
             return;
-        } else if game.get_player::<P>().count_card(game::CardType::Smithy) * 11 < num_money::<G, P>(game) && game.buy_smithy::<P>() {
+        } else if game.get_player::<P>().count_card(card::CardType::Smithy) * 11 < num_money::<G, P>(game) && game.buy_smithy::<P>() {
             return;
         } else {
             game.buy_silver::<P>();

@@ -1,5 +1,5 @@
 use crate::game;
-use crate::game::CardType;
+use crate::card::CardType;
 use crate::card;
 
 pub struct Card {

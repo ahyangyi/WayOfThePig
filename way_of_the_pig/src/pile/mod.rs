@@ -1,19 +1,19 @@
-use crate::game;
+use crate::card;
 
 pub mod none;
 
 pub trait Pile {
     fn make<const N: usize>() -> Self;
     fn enabled(&self) -> bool;
-    fn top(&self) -> Option<game::CardType>;
-    fn pop(&mut self) -> Option<game::CardType>;
+    fn top(&self) -> Option<card::CardType>;
+    fn pop(&mut self) -> Option<card::CardType>;
     fn remaining_cards(&self) -> u8;
 }
 
 macro_rules! make_simple_pile {
     ( $pile:ident, $card:ident, $card_count:expr ) => {
         pub mod $pile {
-            use crate::game;
+            use crate::card;
 
             pub struct Pile {
                 cards: u8,
@@ -34,20 +34,20 @@ macro_rules! make_simple_pile {
                 }
 
                 #[inline]
-                fn top(&self) -> Option<game::CardType> {
+                fn top(&self) -> Option<card::CardType> {
                     if self.cards == 0 {
                         return None;
                     }
-                    Some(game::CardType::$card)
+                    Some(card::CardType::$card)
                 }
 
                 #[inline]
-                fn pop(&mut self) -> Option<game::CardType> {
+                fn pop(&mut self) -> Option<card::CardType> {
                     if self.cards == 0 {
                         return None;
                     }
                     self.cards -= 1;
-                    Some(game::CardType::$card)
+                    Some(card::CardType::$card)
                 }
 
                 #[inline]

@@ -1,5 +1,7 @@
 use bitflags::bitflags;
 use crate::game;
+use num_derive::FromPrimitive;
+
 pub mod province;
 pub mod duchy;
 pub mod estate;
@@ -31,4 +33,44 @@ pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
     fn play<G: game::GameState, const P: usize>(&self, _g: &mut G) {}
+}
+
+#[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
+pub enum CardType {
+    // Base Cards
+    Province,
+    Duchy,
+    Estate,
+    Gold,
+    Silver,
+    Copper,
+    Curse,
+
+    // Colony
+    Colony,
+    Platinum,
+
+    // Shelter
+    OvergrownEstate,
+    Hovel,
+    Necropolis,
+
+    // Base Set
+    Village,
+    Smithy,
+    Militia,
+    Market,
+
+    // Intrigue
+    Upgrade,
+    Patrol,
+    Harem,
+
+    // Hinterland
+    Oasis,
+    SpiceMerchant,
+    Stables,
+
+    // Nocturne
+    FaithfulHound,
 }
