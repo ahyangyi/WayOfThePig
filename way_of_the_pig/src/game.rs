@@ -107,6 +107,7 @@ pub trait GameState {
     // supply inspection
     fn province_in_supply(&self) -> u8;
     fn colony_in_supply(&self) -> u8;
+    fn colony_enabled(&self) -> bool;
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
 }
@@ -120,7 +121,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     copper: u8,
     curse: u8,
 
-    colony: u8,
+    colony: pile::colony::Pile,
     platinum: u8,
 
     smithy: u8,
@@ -333,7 +334,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             silver: 40,
             copper: 46,
             curse: 10,
-            colony: green_count,
+            colony: pile::colony::Pile::make(),
             platinum: 12,
             smithy: 10,
             patrol: 10,
@@ -438,7 +439,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_pile!(copper, Copper, buy_copper, 0);
     make_simple_pile!(curse, Curse, buy_curse, 0);
 
-    make_simple_pile!(colony, Colony, buy_colony, 11);
+    make_simple_buy_fn!(colony, buy_colony, 11);
     make_simple_pile!(platinum, Platinum, buy_platinum, 9);
 
     make_simple_pile!(smithy, Smithy, buy_smithy, 4);
@@ -448,11 +449,18 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
         &mut self.players[P]
     }
 
+    #[inline]
     fn province_in_supply(&self) -> u8 {
         self.province.remaining_cards()
     }
 
+    #[inline]
     fn colony_in_supply(&self) -> u8 {
-        self.colony
+        self.colony.remaining_cards()
+    }
+
+    #[inline]
+    fn colony_enabled(&self) -> bool {
+        self.colony.enabled()
     }
 }

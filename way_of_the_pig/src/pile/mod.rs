@@ -1,6 +1,9 @@
 use crate::game;
 
+pub mod none;
+
 pub mod province;
+pub mod colony;
 
 pub trait Pile {
     fn make() -> Self;

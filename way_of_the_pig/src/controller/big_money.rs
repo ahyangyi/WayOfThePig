@@ -40,7 +40,7 @@ impl controller::Controller for BigMoneyController {
         while game.get_player::<P>().play_gold() {}
         while game.get_player::<P>().play_silver() {}
         while game.get_player::<P>().play_copper() {}
-        if true {
+        if game.colony_enabled() {
             if total_money::<G, P>(game) > 32 && game.buy_colony::<P>() {
                 return;
             } else if game.colony_in_supply() <= 6 && game.buy_province::<P>() {
