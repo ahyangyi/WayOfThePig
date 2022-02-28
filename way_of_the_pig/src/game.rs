@@ -49,6 +49,11 @@ pub enum CardType {
     Colony,
     Platinum,
 
+    // Shelter
+    OvergrownEstate,
+    Hovel,
+    Necropolis,
+
     // Base Set
     Village,
     Smithy,
@@ -69,7 +74,7 @@ pub enum CardType {
     FaithfulHound,
 }
 
-const CARDTYPES : usize = 20;
+const CARDTYPES : usize = 23;
 
 pub trait GameState {
     // buy APIs
