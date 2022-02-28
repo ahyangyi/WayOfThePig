@@ -3,7 +3,7 @@ use crate::game;
 pub mod none;
 
 pub trait Pile {
-    fn make() -> Self;
+    fn make<const N: usize>() -> Self;
     fn enabled(&self) -> bool;
     fn top(&self) -> Option<game::CardType>;
     fn pop(&mut self) -> Option<game::CardType>;
@@ -11,7 +11,7 @@ pub trait Pile {
 }
 
 macro_rules! make_simple_pile {
-    ( $pile:ident, $card:ident ) => {
+    ( $pile:ident, $card:ident, $card_count:expr ) => {
         pub mod $pile {
             use crate::game;
 
@@ -21,10 +21,10 @@ macro_rules! make_simple_pile {
 
             impl crate::pile::Pile for Pile {
                 #[inline]
-                fn make() -> Self {
+                fn make<const N: usize>() -> Self {
                     // FIXME depend on player count
                     Pile {
-                        cards: 8,
+                        cards: $card_count[N - 2],
                     }
                 }
 
@@ -59,5 +59,16 @@ macro_rules! make_simple_pile {
     };
 }
 
-make_simple_pile!(province, Province);
-make_simple_pile!(colony, Colony);
+make_simple_pile!(province, Province, [8, 8, 12, 15, 18]);
+make_simple_pile!(duchy, Duchy, [8, 8, 12, 12, 12]);
+make_simple_pile!(estate, Estate, [8, 8, 12, 12, 12]);
+make_simple_pile!(gold, Gold, [30, 30, 30, 60, 60]);
+make_simple_pile!(silver, Silver, [40, 40, 40, 80, 80]);
+make_simple_pile!(copper, Copper, [46, 39, 32, 85, 78]);
+make_simple_pile!(curse, Curse, [10, 20, 30, 40, 50]);
+
+make_simple_pile!(colony, Colony, [8, 8, 12, 12, 12]);
+make_simple_pile!(platinum, Platinum, [12, 12, 12, 12, 12]);
+
+make_simple_pile!(smithy, Smithy, [10, 10, 10, 10, 10]);
+make_simple_pile!(patrol, Patrol, [10, 10, 10, 10, 10]);

@@ -9,23 +9,6 @@ use rand::seq::SliceRandom;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
-#[macro_export]
-macro_rules! make_simple_pile {
-    ( $pile:ident, $card:ident, $f:ident, $p:expr ) => {
-        fn $f<const P: usize>(&mut self) -> bool {
-            if self.$pile == 0 || self.players[P].buy == 0 || self.players[P].coin < $p {
-                return false;
-            }
-            self.$pile -= 1;
-            self.players[P].buy -= 1;
-            self.players[P].coin -= $p;
-            self.players[P].gain(CardType::$card);
-            self.players[P].deck_stats[CardType::$card as usize] += 1;
-            true
-        }
-    };
-}
-
 macro_rules! make_simple_buy_fn {
     ( $pile:ident, $f:ident, $p:expr ) => {
         fn $f<const P: usize>(&mut self) -> bool {
@@ -114,18 +97,18 @@ pub trait GameState {
 
 pub struct Game<K: kingdom::Kingdom, const N: usize> {
     province: pile::province::Pile,
-    duchy: u8,
-    estate: u8,
-    gold: u8,
-    silver: u8,
-    copper: u8,
-    curse: u8,
+    duchy: pile::duchy::Pile,
+    estate: pile::estate::Pile,
+    gold: pile::gold::Pile,
+    silver: pile::silver::Pile,
+    copper: pile::copper::Pile,
+    curse: pile::curse::Pile,
 
     colony: pile::colony::Pile,
-    platinum: u8,
+    platinum: pile::platinum::Pile,
 
-    smithy: u8,
-    patrol: u8,
+    smithy: pile::smithy::Pile,
+    patrol: pile::patrol::Pile,
 
     kingdom: PhantomData<K>,
     players: [PersonalState; N],
@@ -325,19 +308,18 @@ impl PersonalState {
 
 impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     pub fn make() -> Game<K, N> {
-        let green_count = if N > 2 {12} else {8};
         let ret: Game<K, N> = Game {
-            province: pile::province::Pile::make(),
-            duchy: green_count,
-            estate: green_count,
-            gold: 30,
-            silver: 40,
-            copper: 46,
-            curse: 10,
-            colony: pile::colony::Pile::make(),
-            platinum: 12,
-            smithy: 10,
-            patrol: 10,
+            province: pile::province::Pile::make::<N>(),
+            duchy: pile::duchy::Pile::make::<N>(),
+            estate: pile::estate::Pile::make::<N>(),
+            gold: pile::gold::Pile::make::<N>(),
+            silver: pile::silver::Pile::make::<N>(),
+            copper: pile::copper::Pile::make::<N>(),
+            curse: pile::curse::Pile::make::<N>(),
+            colony: pile::colony::Pile::make::<N>(),
+            platinum: pile::platinum::Pile::make::<N>(),
+            smithy: pile::smithy::Pile::make::<N>(),
+            patrol: pile::patrol::Pile::make::<N>(),
             kingdom: PhantomData,
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
@@ -355,25 +337,26 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 
     fn pile_end(&self) -> bool {
         let mut empty_pile = 0;
-        if self.duchy == 0 {
+        if self.duchy.remaining_cards() == 0 {
             empty_pile+=1;
         }
-        if self.estate == 0 {
+        if self.estate.remaining_cards() == 0 {
             empty_pile+=1;
         }
-        if self.gold == 0 {
+        if self.gold.remaining_cards() == 0 {
             empty_pile+=1;
         }
-        if self.silver == 0 {
+        if self.silver.remaining_cards() == 0 {
             empty_pile+=1;
         }
-        if self.copper == 0 {
+        if self.copper.remaining_cards() == 0 {
             empty_pile+=1;
         }
-        if self.curse == 0 {
+        if self.curse.remaining_cards() == 0 {
             empty_pile+=1;
         }
-        empty_pile >= 3
+        let end_condition = if N >= 4 { 3 } else { 4 };
+        empty_pile >= end_condition
     }
 
     fn end(&self) -> bool {
@@ -432,18 +415,18 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 
 impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_buy_fn!(province, buy_province, 8);
-    make_simple_pile!(duchy, Duchy, buy_duchy, 5);
-    make_simple_pile!(estate, Estate, buy_estate, 2);
-    make_simple_pile!(gold, Gold, buy_gold, 6);
-    make_simple_pile!(silver, Silver, buy_silver, 3);
-    make_simple_pile!(copper, Copper, buy_copper, 0);
-    make_simple_pile!(curse, Curse, buy_curse, 0);
+    make_simple_buy_fn!(duchy, buy_duchy, 5);
+    make_simple_buy_fn!(estate, buy_estate, 2);
+    make_simple_buy_fn!(gold, buy_gold, 6);
+    make_simple_buy_fn!(silver, buy_silver, 3);
+    make_simple_buy_fn!(copper, buy_copper, 0);
+    make_simple_buy_fn!(curse, buy_curse, 0);
 
     make_simple_buy_fn!(colony, buy_colony, 11);
-    make_simple_pile!(platinum, Platinum, buy_platinum, 9);
+    make_simple_buy_fn!(platinum, buy_platinum, 9);
 
-    make_simple_pile!(smithy, Smithy, buy_smithy, 4);
-    make_simple_pile!(patrol, Patrol, buy_patrol, 5);
+    make_simple_buy_fn!(smithy, buy_smithy, 4);
+    make_simple_buy_fn!(patrol, buy_patrol, 5);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]

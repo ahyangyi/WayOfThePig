@@ -6,7 +6,7 @@ pub struct Pile {
 
 impl pile::Pile for Pile {
     #[inline]
-    fn make() -> Self {
+    fn make<const N: usize>() -> Self {
         Pile{}
     }
 
