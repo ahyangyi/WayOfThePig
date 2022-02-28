@@ -128,7 +128,7 @@ pub struct PersonalState {
     deck_stats: [u32; CARDTYPES],
     action: u32,
     buy: u32,
-    coin: u32,
+    pub coin: u32,
 }
 
 impl PersonalState {

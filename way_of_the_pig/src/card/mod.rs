@@ -1,4 +1,5 @@
 use bitflags::bitflags;
+use crate::game;
 pub mod province;
 pub mod duchy;
 pub mod estate;
@@ -27,4 +28,5 @@ bitflags! {
 pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
+    fn play<G: game::GameState, const P: usize>(g: &mut G) {}
 }
