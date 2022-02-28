@@ -36,10 +36,10 @@ impl BigMoneyController {
 impl controller::Controller for BigMoneyController {
     fn act<G: game::GameState, const P: usize>(&mut self, _game: &mut G) {}
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
-        while game.get_player::<P>().play_platinum() {}
-        while game.get_player::<P>().play_gold() {}
-        while game.get_player::<P>().play_silver() {}
-        while game.get_player::<P>().play_copper() {}
+        while game.play_platinum::<P>() {}
+        while game.play_gold::<P>() {}
+        while game.play_silver::<P>() {}
+        while game.play_copper::<P>() {}
         if game.colony_enabled() {
             if total_money::<G, P>(game) > 32 && game.buy_colony::<P>() {
                 return;

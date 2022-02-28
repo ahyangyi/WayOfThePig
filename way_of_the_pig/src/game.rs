@@ -3,6 +3,7 @@ use crate::controller;
 use crate::pile;
 use crate::pile::Pile;
 use crate::card;
+use crate::card::Card;
 use std::marker::PhantomData;
 use std::mem;
 use rand::{thread_rng, Rng};
@@ -35,14 +36,14 @@ macro_rules! make_simple_buy_fn {
 }
 
 macro_rules! make_simple_play_fn {
-    ( $card:ident, $f:ident ) => {
-        pub fn $f(&mut self) -> bool {
-            if self.hand[CardType::$card as usize] == 0 {
+    ( $card:ident, $c:ident, $f:ident ) => {
+        fn $f<const P: usize>(&mut self) -> bool {
+            if self.players[P].hand[CardType::$card as usize] == 0 {
                 return false;
             }
-            self.hand[CardType::$card as usize] -= 1;
-            self.play.push(CardType::$card);
-            self.coin += 3;
+            self.players[P].hand[CardType::$card as usize] -= 1;
+            self.players[P].play.push(CardType::$card);
+            card::$c::Card::play::<Self, P>(self);
             true
         }
     };
@@ -106,6 +107,13 @@ pub trait GameState {
 
     fn buy_smithy<const P: usize>(&mut self) -> bool;
     fn buy_patrol<const P: usize>(&mut self) -> bool;
+
+    // play APIs
+    fn play_gold<const P: usize>(&mut self) -> bool;
+    fn play_silver<const P: usize>(&mut self) -> bool;
+    fn play_copper<const P: usize>(&mut self) -> bool;
+
+    fn play_platinum<const P: usize>(&mut self) -> bool;
 
     // supply inspection
     fn province_in_supply(&self) -> u8;
@@ -213,38 +221,6 @@ impl PersonalState {
         for _card in 0..5 {
             self.draw();
         }
-    }
-
-    make_simple_play_fn!(Gold, play_gold);
-
-    pub fn play_platinum(&mut self) -> bool {
-        if self.hand[CardType::Platinum as usize] == 0 {
-            return false;
-        }
-        self.hand[CardType::Platinum as usize] -= 1;
-        self.play.push(CardType::Platinum);
-        self.coin += 5;
-        true
-    }
-
-    pub fn play_silver(&mut self) -> bool {
-        if self.hand[CardType::Silver as usize] == 0 {
-            return false;
-        }
-        self.hand[CardType::Silver as usize] -= 1;
-        self.play.push(CardType::Silver);
-        self.coin += 2;
-        true
-    }
-
-    pub fn play_copper(&mut self) -> bool {
-        if self.hand[CardType::Copper as usize] == 0 {
-            return false;
-        }
-        self.hand[CardType::Copper as usize] -= 1;
-        self.play.push(CardType::Copper);
-        self.coin += 1;
-        true
     }
 
     pub fn play_smithy(&mut self) -> bool {
@@ -439,6 +415,12 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
 
     make_simple_buy_fn!(smithy, buy_smithy, 4);
     make_simple_buy_fn!(patrol, buy_patrol, 5);
+
+    make_simple_play_fn!(Gold, gold, play_gold);
+    make_simple_play_fn!(Silver, silver, play_silver);
+    make_simple_play_fn!(Copper, copper, play_copper);
+
+    make_simple_play_fn!(Platinum, platinum, play_platinum);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]

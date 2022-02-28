@@ -7,6 +7,7 @@ pub mod gold;
 pub mod silver;
 pub mod copper;
 pub mod curse;
+pub mod platinum;
 pub mod smithy;
 
 bitflags! {
@@ -28,5 +29,5 @@ bitflags! {
 pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
-    fn play<G: game::GameState, const P: usize>(g: &mut G) {}
+    fn play<G: game::GameState, const P: usize>(_g: &mut G) {}
 }

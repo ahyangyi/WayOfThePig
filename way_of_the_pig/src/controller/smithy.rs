@@ -36,9 +36,9 @@ impl controller::Controller for BigMoneyController {
         game.get_player::<P>().play_smithy();
     }
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
-        while game.get_player::<P>().play_gold() {}
-        while game.get_player::<P>().play_silver() {}
-        while game.get_player::<P>().play_copper() {}
+        while game.play_gold::<P>() {}
+        while game.play_silver::<P>() {}
+        while game.play_copper::<P>() {}
         if total_money::<G, P>(game) > 15 && game.buy_province::<P>() {
             return;
         } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
