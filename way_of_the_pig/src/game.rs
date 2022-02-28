@@ -2,6 +2,7 @@ use crate::kingdom;
 use crate::controller;
 use crate::pile;
 use crate::pile::Pile;
+use crate::card;
 use std::marker::PhantomData;
 use std::mem;
 use rand::{thread_rng, Rng};
@@ -29,6 +30,20 @@ macro_rules! make_simple_buy_fn {
                     true
                 }
             }
+        }
+    };
+}
+
+macro_rules! make_simple_play_fn {
+    ( $card:ident, $f:ident ) => {
+        pub fn $f(&mut self) -> bool {
+            if self.hand[CardType::$card as usize] == 0 {
+                return false;
+            }
+            self.hand[CardType::$card as usize] -= 1;
+            self.play.push(CardType::$card);
+            self.coin += 3;
+            true
         }
     };
 }
@@ -200,15 +215,7 @@ impl PersonalState {
         }
     }
 
-    pub fn play_gold(&mut self) -> bool {
-        if self.hand[CardType::Gold as usize] == 0 {
-            return false;
-        }
-        self.hand[CardType::Gold as usize] -= 1;
-        self.play.push(CardType::Gold);
-        self.coin += 3;
-        true
-    }
+    make_simple_play_fn!(Gold, play_gold);
 
     pub fn play_platinum(&mut self) -> bool {
         if self.hand[CardType::Platinum as usize] == 0 {
