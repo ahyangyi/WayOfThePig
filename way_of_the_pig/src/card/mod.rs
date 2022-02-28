@@ -9,6 +9,7 @@ pub mod copper;
 pub mod curse;
 pub mod platinum;
 pub mod smithy;
+pub mod patrol;
 
 bitflags! {
     pub struct Type: u32 {

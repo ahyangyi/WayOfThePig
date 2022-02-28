@@ -115,6 +115,9 @@ pub trait GameState {
 
     fn play_platinum<const P: usize>(&mut self) -> bool;
 
+    fn play_smithy<const P: usize>(&mut self) -> bool;
+    fn play_patrol<const P: usize>(&mut self) -> bool;
+
     // supply inspection
     fn province_in_supply(&self) -> u8;
     fn colony_in_supply(&self) -> u8;
@@ -144,9 +147,9 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 }
 
 pub struct PersonalState {
-    deck: Vec<CardType>,
+    pub deck: Vec<CardType>,
     discard: Vec<CardType>,
-    hand: [u32; CARDTYPES],
+    pub hand: [u32; CARDTYPES],
     play: Vec<CardType>,
     deck_stats: [u32; CARDTYPES],
     action: u32,
@@ -221,48 +224,6 @@ impl PersonalState {
         for _card in 0..5 {
             self.draw();
         }
-    }
-
-    pub fn play_smithy(&mut self) -> bool {
-        if self.hand[CardType::Smithy as usize] == 0 || self.action == 0 {
-            return false;
-        }
-        self.hand[CardType::Smithy as usize] -= 1;
-        self.play.push(CardType::Smithy);
-        self.draw();
-        self.draw();
-        self.draw();
-        true
-    }
-
-    pub fn play_patrol(&mut self) -> bool {
-        if self.hand[CardType::Patrol as usize] == 0 || self.action == 0 {
-            return false;
-        }
-        self.hand[CardType::Patrol as usize] -= 1;
-        self.play.push(CardType::Patrol);
-        self.draw();
-        self.draw();
-        self.draw();
-
-        let mut m : Vec<CardType> = vec![];
-        for _i in 0..4 {
-            let card = self.draw_to();
-            match card {
-                None => {break;},
-                Some(x) => {
-                    if x == CardType::Province || x == CardType::Duchy || x == CardType::Estate {
-                        self.hand[x as usize] += 1;
-                    } else {
-                        m.push(x);
-                    }
-                }
-            }
-        }
-
-        // FIXME: let the player to decide the order
-        self.deck.append(&mut m);
-        true
     }
 
     // only guarantees meaningful results at game end
@@ -421,6 +382,9 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_play_fn!(Copper, copper, play_copper);
 
     make_simple_play_fn!(Platinum, platinum, play_platinum);
+
+    make_simple_play_fn!(Smithy, smithy, play_smithy);
+    make_simple_play_fn!(Patrol, patrol, play_patrol);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]
