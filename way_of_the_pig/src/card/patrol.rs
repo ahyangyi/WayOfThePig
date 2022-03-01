@@ -28,7 +28,7 @@ impl card::Card for Card {
             match card {
                 None => {break;},
                 Some(x) => {
-                    if x == CardType::Province || x == CardType::Duchy || x == CardType::Estate {
+                    if card::static_type(x).contains(card::Type::VICTORY) {
                         g.get_player::<P>().hand[x as usize] += 1;
                     } else {
                         m.push(x);
