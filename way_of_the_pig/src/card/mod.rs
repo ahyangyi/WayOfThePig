@@ -15,6 +15,8 @@ pub mod patrol;
 
 bitflags! {
     pub struct Type: u32 {
+        const NONE = 0;
+
         // Basic types
         const ACTION = 0x1;
         const TREASURE = 0x2;
@@ -74,3 +76,21 @@ pub enum CardType {
     // Nocturne
     FaithfulHound,
 }
+
+macro_rules! make_dynamic_dispatch_fn {
+    ( $f:ident, $m:ident, $t:ty, $d:expr ) => {
+        pub fn $f(c: CardType) -> $t {
+            match c {
+                CardType::Province => {province::Card::$m()},
+                CardType::Duchy => {duchy::Card::$m()},
+                CardType::Estate => {estate::Card::$m()},
+
+                CardType::Platinum => {platinum::Card::$m()},
+
+                _ => {$d}
+            }
+        }
+    };
+}
+
+make_dynamic_dispatch_fn!(static_type, static_type, Type, Type::NONE);
