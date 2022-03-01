@@ -32,7 +32,7 @@ bitflags! {
 pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
-    fn play<G: game::GameState, const P: usize>(&self, _g: &mut G) {}
+    fn play<G: game::GameState, const P: usize>(_g: &mut G) {}
 }
 
 #[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
