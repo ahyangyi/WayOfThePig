@@ -43,9 +43,9 @@ macro_rules! round_robin {
 
 fn main() {
     let mut w = [[0u32; 3]; 3];
-    let mut p1 : big_money::BigMoneyController = big_money::BigMoneyController::make();
-    let mut p2 : smithy::BigMoneyController = smithy::BigMoneyController::make();
-    let mut p3 : patrol::BigMoneyController = patrol::BigMoneyController::make();
+    let mut p1 : big_money::Controller = big_money::Controller::make();
+    let mut p2 : smithy::Controller = smithy::Controller::make();
+    let mut p3 : patrol::Controller = patrol::Controller::make();
     round_robin!(a; w; p1, p2, p3);
 
     let names = ["bm", "smithy", "patrol"];

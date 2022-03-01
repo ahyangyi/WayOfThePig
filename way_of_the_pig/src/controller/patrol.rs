@@ -3,7 +3,7 @@ use crate::card;
 use crate::game;
 use crate::controller;
 
-pub struct BigMoneyController {
+pub struct Controller {
 }
 
 fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
@@ -18,13 +18,13 @@ fn num_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(card::CardType::Copper)
 }
 
-impl BigMoneyController {
-    pub fn make() -> BigMoneyController{
-        BigMoneyController {}
+impl Controller {
+    pub fn make() -> Controller{
+        Controller {}
     }
 }
 
-impl controller::Controller for BigMoneyController {
+impl controller::Controller for Controller {
     fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
         game.play_patrol::<P>();
     }
