@@ -22,7 +22,7 @@ macro_rules! make_simple_buy_fn {
                 Some(x) => {
                     self.$pile.pop();
                     self.players[P].buy -= 1;
-                    self.players[P].coin -= 8;
+                    self.players[P].coin -= $p;
                     self.players[P].gain(x);
                     self.players[P].deck_stats[x as usize] += 1;
                     true
