@@ -96,14 +96,13 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     copper: pile::copper::Pile,
     curse: pile::curse::Pile,
 
-    colony: pile::colony::Pile,
-    platinum: pile::platinum::Pile,
+    colony: K::ColonyPile,
+    platinum: K::PlatinumPile,
 
     smithy: pile::smithy::Pile,
     patrol: pile::patrol::Pile,
     harem: pile::harem::Pile,
 
-    kingdom: PhantomData<K>,
     players: [PersonalState; N],
     trash: Vec<CardType>,
 }
@@ -230,12 +229,11 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             silver: pile::silver::Pile::make::<N>(),
             copper: pile::copper::Pile::make::<N>(),
             curse: pile::curse::Pile::make::<N>(),
-            colony: pile::colony::Pile::make::<N>(),
-            platinum: pile::platinum::Pile::make::<N>(),
+            colony: K::ColonyPile::make::<N>(),
+            platinum: K::PlatinumPile::make::<N>(),
             smithy: pile::smithy::Pile::make::<N>(),
             patrol: pile::patrol::Pile::make::<N>(),
             harem: pile::harem::Pile::make::<N>(),
-            kingdom: PhantomData,
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
         };
