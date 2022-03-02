@@ -11,18 +11,21 @@ use std::marker::PhantomData;
 use std::mem;
 
 macro_rules! make_simple_buy_fn {
-    ( $pile:ident, $f:ident, $p:expr ) => {
+    ( $pile:ident, $f:ident ) => {
         fn $f<const P: usize>(&mut self) -> bool {
-            if !self.$pile.enabled() || self.players[P].buy == 0 || self.players[P].coin < $p {
+            if !self.$pile.enabled() || self.players[P].buy == 0 {
                 return false;
             }
             let card = self.$pile.top();
             match card {
                 None => false,
                 Some(x) => {
+                    if self.players[P].coin < card::static_price(x) {
+                        return false;
+                    }
                     self.$pile.pop();
                     self.players[P].buy -= 1;
-                    self.players[P].coin -= $p;
+                    self.players[P].coin -= card::static_price(x);
                     self.players[P].gain(x);
                     self.players[P].deck_stats[x as usize] += 1;
                     true
@@ -326,20 +329,20 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
 }
 
 impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
-    make_simple_buy_fn!(province, buy_province, 8);
-    make_simple_buy_fn!(duchy, buy_duchy, 5);
-    make_simple_buy_fn!(estate, buy_estate, 2);
-    make_simple_buy_fn!(gold, buy_gold, 6);
-    make_simple_buy_fn!(silver, buy_silver, 3);
-    make_simple_buy_fn!(copper, buy_copper, 0);
-    make_simple_buy_fn!(curse, buy_curse, 0);
+    make_simple_buy_fn!(province, buy_province);
+    make_simple_buy_fn!(duchy, buy_duchy);
+    make_simple_buy_fn!(estate, buy_estate);
+    make_simple_buy_fn!(gold, buy_gold);
+    make_simple_buy_fn!(silver, buy_silver);
+    make_simple_buy_fn!(copper, buy_copper);
+    make_simple_buy_fn!(curse, buy_curse);
 
-    make_simple_buy_fn!(colony, buy_colony, 11);
-    make_simple_buy_fn!(platinum, buy_platinum, 9);
+    make_simple_buy_fn!(colony, buy_colony);
+    make_simple_buy_fn!(platinum, buy_platinum);
 
-    make_simple_buy_fn!(smithy, buy_smithy, 4);
-    make_simple_buy_fn!(harem, buy_harem, 6);
-    make_simple_buy_fn!(patrol, buy_patrol, 5);
+    make_simple_buy_fn!(smithy, buy_smithy);
+    make_simple_buy_fn!(harem, buy_harem);
+    make_simple_buy_fn!(patrol, buy_patrol);
 
     make_simple_play_fn!(Gold, gold, play_gold);
     make_simple_play_fn!(Silver, silver, play_silver);

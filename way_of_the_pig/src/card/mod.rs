@@ -3,6 +3,7 @@ use bitflags::bitflags;
 use num_derive::FromPrimitive;
 
 // Base
+pub mod province;
 pub mod copper;
 pub mod curse;
 pub mod duchy;
@@ -12,7 +13,7 @@ pub mod silver;
 
 // Colony
 pub mod platinum;
-pub mod province;
+pub mod colony;
 
 // Base Set
 pub mod smithy;
@@ -87,15 +88,22 @@ pub enum CardType {
 
 macro_rules! make_dynamic_dispatch_fn {
     ( $f:ident, $m:ident, $t:ty, $d:expr ) => {
+        #[inline]
         pub fn $f(c: CardType) -> $t {
             match c {
                 CardType::Province => province::Card::$m(),
                 CardType::Duchy => duchy::Card::$m(),
                 CardType::Estate => estate::Card::$m(),
+                CardType::Gold => gold::Card::$m(),
+                CardType::Silver => silver::Card::$m(),
+                CardType::Copper => copper::Card::$m(),
 
+                CardType::Colony => colony::Card::$m(),
                 CardType::Platinum => platinum::Card::$m(),
 
+                CardType::Smithy => smithy::Card::$m(),
                 CardType::Harem => harem::Card::$m(),
+                CardType::Patrol => patrol::Card::$m(),
 
                 _ => $d,
             }
@@ -104,3 +112,4 @@ macro_rules! make_dynamic_dispatch_fn {
 }
 
 make_dynamic_dispatch_fn!(static_type, static_type, Type, Type::NONE);
+make_dynamic_dispatch_fn!(static_price, static_price, u32, 0);

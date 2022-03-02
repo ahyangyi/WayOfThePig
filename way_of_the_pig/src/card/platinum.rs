@@ -6,7 +6,7 @@ pub struct Card {}
 impl card::Card for Card {
     #[inline]
     fn static_price() -> u32 {
-        6
+        9
     }
 
     #[inline]
