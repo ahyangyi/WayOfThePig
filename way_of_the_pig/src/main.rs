@@ -1,5 +1,6 @@
 use way_of_the_pig::controller::big_money;
 use way_of_the_pig::controller::patrol;
+use way_of_the_pig::controller::patrol_harem;
 use way_of_the_pig::controller::smithy;
 use way_of_the_pig::game;
 use way_of_the_pig::kingdom;
@@ -42,15 +43,16 @@ macro_rules! round_robin {
 }
 
 fn main() {
-    let mut w = [[0u32; 3]; 3];
+    let mut w = [[0u32; 4]; 4];
     let mut p1: big_money::Controller = big_money::Controller::make();
     let mut p2: smithy::Controller = smithy::Controller::make();
     let mut p3: patrol::Controller = patrol::Controller::make();
-    round_robin!(a; w; p1, p2, p3);
+    let mut p4: patrol_harem::Controller = patrol_harem::Controller::make();
+    round_robin!(a; w; p1, p2, p3, p4);
 
-    let names = ["bm", "smithy", "patrol"];
-    for i in 0..3 {
-        for j in i + 1..3 {
+    let names = ["bm", "smithy", "patrol", "patrol+harem"];
+    for i in 0..4 {
+        for j in i + 1..4 {
             let p1 = w[i][j] as f64 / 200000.0;
             let p2 = 1.0 - (w[j][i] as f64 / 200000.0);
             println!("{} vs {}: {:.3} ({:.3}; {:.3})", names[i], names[j], (p1 + p2) / 2.0, p1, p2);

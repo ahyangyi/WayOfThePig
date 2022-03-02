@@ -2,16 +2,24 @@ use crate::game;
 use bitflags::bitflags;
 use num_derive::FromPrimitive;
 
+// Base
 pub mod copper;
 pub mod curse;
 pub mod duchy;
 pub mod estate;
 pub mod gold;
-pub mod patrol;
+pub mod silver;
+
+// Colony
 pub mod platinum;
 pub mod province;
-pub mod silver;
+
+// Base Set
 pub mod smithy;
+
+// Intrigue
+pub mod harem;
+pub mod patrol;
 
 bitflags! {
     pub struct Type: u32 {
@@ -86,6 +94,8 @@ macro_rules! make_dynamic_dispatch_fn {
                 CardType::Estate => estate::Card::$m(),
 
                 CardType::Platinum => platinum::Card::$m(),
+
+                CardType::Harem => harem::Card::$m(),
 
                 _ => $d,
             }

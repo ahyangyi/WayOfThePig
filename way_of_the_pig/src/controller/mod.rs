@@ -2,6 +2,7 @@ use crate::game;
 
 pub mod big_money;
 pub mod patrol;
+pub mod patrol_harem;
 pub mod smithy;
 
 pub trait Controller {

@@ -63,6 +63,7 @@ pub trait GameState {
 
     fn buy_smithy<const P: usize>(&mut self) -> bool;
     fn buy_patrol<const P: usize>(&mut self) -> bool;
+    fn buy_harem<const P: usize>(&mut self) -> bool;
 
     // play APIs
     fn play_gold<const P: usize>(&mut self) -> bool;
@@ -73,6 +74,7 @@ pub trait GameState {
 
     fn play_smithy<const P: usize>(&mut self) -> bool;
     fn play_patrol<const P: usize>(&mut self) -> bool;
+    fn play_harem<const P: usize>(&mut self) -> bool;
 
     // supply inspection
     fn province_in_supply(&self) -> u8;
@@ -96,6 +98,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 
     smithy: pile::smithy::Pile,
     patrol: pile::patrol::Pile,
+    harem: pile::harem::Pile,
 
     kingdom: PhantomData<K>,
     players: [PersonalState; N],
@@ -190,6 +193,7 @@ impl PersonalState {
             + self.count_card_static::<{ CardType::Province as usize }>() * 6
             + self.count_card_static::<{ CardType::Duchy as usize }>() * 3
             + self.count_card_static::<{ CardType::Estate as usize }>() * 1
+            + self.count_card_static::<{ CardType::Harem as usize }>() * 2
     }
 
     pub fn get_action(&self) -> u32 {
@@ -227,6 +231,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             platinum: pile::platinum::Pile::make::<N>(),
             smithy: pile::smithy::Pile::make::<N>(),
             patrol: pile::patrol::Pile::make::<N>(),
+            harem: pile::harem::Pile::make::<N>(),
             kingdom: PhantomData,
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
@@ -333,6 +338,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_buy_fn!(platinum, buy_platinum, 9);
 
     make_simple_buy_fn!(smithy, buy_smithy, 4);
+    make_simple_buy_fn!(harem, buy_harem, 6);
     make_simple_buy_fn!(patrol, buy_patrol, 5);
 
     make_simple_play_fn!(Gold, gold, play_gold);
@@ -342,6 +348,8 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_play_fn!(Platinum, platinum, play_platinum);
 
     make_simple_play_fn!(Smithy, smithy, play_smithy);
+
+    make_simple_play_fn!(Harem, harem, play_harem);
     make_simple_play_fn!(Patrol, patrol, play_patrol);
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
