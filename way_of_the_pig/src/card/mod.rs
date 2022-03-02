@@ -17,6 +17,7 @@ pub mod platinum;
 
 // Base Set
 pub mod smithy;
+pub mod village;
 
 // Intrigue
 pub mod harem;
@@ -106,6 +107,8 @@ macro_rules! make_dynamic_dispatch_fn {
                 CardType::Platinum => platinum::Card::$m(),
 
                 CardType::Smithy => smithy::Card::$m(),
+                CardType::Village => village::Card::$m(),
+
                 CardType::Harem => harem::Card::$m(),
                 CardType::Patrol => patrol::Card::$m(),
 

@@ -112,7 +112,7 @@ pub struct PersonalState {
     pub hand: [u32; CARDTYPES],
     play: Vec<CardType>,
     deck_stats: [u32; CARDTYPES],
-    action: u32,
+    pub action: u32,
     buy: u32,
     pub coin: u32,
 }

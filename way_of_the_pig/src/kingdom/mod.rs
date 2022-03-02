@@ -1,6 +1,7 @@
 use crate::pile;
 
 pub trait Kingdom {
+    // Colony
     type ColonyPile: pile::Pile;
     type PlatinumPile: pile::Pile;
 }
