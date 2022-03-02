@@ -3,17 +3,17 @@ use bitflags::bitflags;
 use num_derive::FromPrimitive;
 
 // Base
-pub mod province;
 pub mod copper;
 pub mod curse;
 pub mod duchy;
 pub mod estate;
 pub mod gold;
+pub mod province;
 pub mod silver;
 
 // Colony
-pub mod platinum;
 pub mod colony;
+pub mod platinum;
 
 // Base Set
 pub mod smithy;
@@ -44,6 +44,10 @@ pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
     fn play<G: game::GameState, const P: usize>(_g: &mut G) {}
+    #[inline]
+    fn vp() -> u32 {
+        0
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Debug, FromPrimitive)]

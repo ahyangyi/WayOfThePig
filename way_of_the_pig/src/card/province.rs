@@ -9,4 +9,7 @@ impl card::Card for Card {
     fn static_type() -> card::Type {
         card::Type::VICTORY
     }
+    fn vp() -> u32 {
+        6
+    }
 }
