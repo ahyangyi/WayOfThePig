@@ -7,7 +7,6 @@ use crate::pile::Pile;
 use num_traits::FromPrimitive;
 use rand::seq::SliceRandom;
 use rand::{thread_rng, Rng};
-use std::marker::PhantomData;
 use std::mem;
 
 macro_rules! make_simple_buy_fn {
@@ -240,14 +239,17 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         ret
     }
 
+    #[inline]
     fn province_end(&self) -> bool {
         self.province_in_supply() == 0
     }
 
+    #[inline]
     fn colony_end(&self) -> bool {
-        false
+        self.colony_enabled() && self.colony_in_supply() == 0
     }
 
+    #[inline]
     fn pile_end(&self) -> bool {
         let mut empty_pile = 0;
         if self.duchy.remaining_cards() == 0 {
@@ -266,6 +268,15 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             empty_pile += 1;
         }
         if self.curse.remaining_cards() == 0 {
+            empty_pile += 1;
+        }
+        if self.smithy.enabled() && self.smithy.remaining_cards() == 0 {
+            empty_pile += 1;
+        }
+        if self.harem.enabled() && self.harem.remaining_cards() == 0 {
+            empty_pile += 1;
+        }
+        if self.patrol.enabled() && self.patrol.remaining_cards() == 0 {
             empty_pile += 1;
         }
         let end_condition = if N >= 4 { 3 } else { 4 };
