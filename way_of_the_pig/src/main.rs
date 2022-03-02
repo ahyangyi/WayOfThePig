@@ -53,14 +53,7 @@ fn main() {
         for j in i + 1..3 {
             let p1 = w[i][j] as f64 / 200000.0;
             let p2 = 1.0 - (w[j][i] as f64 / 200000.0);
-            println!(
-                "{} vs {}: {:.3} ({:.3}; {:.3})",
-                names[i],
-                names[j],
-                (p1 + p2) / 2.0,
-                p1,
-                p2
-            );
+            println!("{} vs {}: {:.3} ({:.3}; {:.3})", names[i], names[j], (p1 + p2) / 2.0, p1, p2);
         }
     }
 }

@@ -59,8 +59,7 @@ impl controller::Controller for Controller {
                 return;
             } else if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Patrol) * 11
-                < num_money::<G, P>(game)
+            } else if game.get_player::<P>().count_card(card::CardType::Patrol) * 11 < num_money::<G, P>(game)
                 && game.buy_smithy::<P>()
             {
                 return;
@@ -78,8 +77,7 @@ impl controller::Controller for Controller {
                 return;
             } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Smithy) * 11
-                < num_money::<G, P>(game)
+            } else if game.get_player::<P>().count_card(card::CardType::Smithy) * 11 < num_money::<G, P>(game)
                 && game.buy_smithy::<P>()
             {
                 return;
