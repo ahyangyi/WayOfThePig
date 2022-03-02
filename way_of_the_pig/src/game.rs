@@ -1,21 +1,19 @@
-use crate::kingdom;
-use crate::controller;
-use crate::pile;
-use crate::pile::Pile;
 use crate::card;
 use crate::card::{Card, CardType};
+use crate::controller;
+use crate::kingdom;
+use crate::pile;
+use crate::pile::Pile;
+use num_traits::FromPrimitive;
+use rand::seq::SliceRandom;
+use rand::{thread_rng, Rng};
 use std::marker::PhantomData;
 use std::mem;
-use rand::{thread_rng, Rng};
-use rand::seq::SliceRandom;
-use num_traits::FromPrimitive;
 
 macro_rules! make_simple_buy_fn {
     ( $pile:ident, $f:ident, $p:expr ) => {
         fn $f<const P: usize>(&mut self) -> bool {
-            if !self.$pile.enabled() ||
-                self.players[P].buy == 0 ||
-                self.players[P].coin < $p {
+            if !self.$pile.enabled() || self.players[P].buy == 0 || self.players[P].coin < $p {
                 return false;
             }
             let card = self.$pile.top();
@@ -48,8 +46,7 @@ macro_rules! make_simple_play_fn {
     };
 }
 
-
-const CARDTYPES : usize = 23;
+const CARDTYPES: usize = 23;
 
 pub trait GameState {
     // buy APIs
@@ -156,8 +153,10 @@ impl PersonalState {
     pub fn draw(&mut self) {
         let card = self.draw_to();
         match card {
-            None => {},
-            Some(x) => {self.hand[x as usize] += 1;}
+            None => {}
+            Some(x) => {
+                self.hand[x as usize] += 1;
+            }
         }
     }
 
@@ -187,10 +186,10 @@ impl PersonalState {
 
     // only guarantees meaningful results at game end
     pub fn total_final_vp(&self) -> u32 {
-        self.count_card_static::<{CardType::Colony as usize}>() * 10 +
-        self.count_card_static::<{CardType::Province as usize}>() * 6 +
-        self.count_card_static::<{CardType::Duchy as usize}>() * 3 +
-        self.count_card_static::<{CardType::Estate as usize}>() * 1
+        self.count_card_static::<{ CardType::Colony as usize }>() * 10
+            + self.count_card_static::<{ CardType::Province as usize }>() * 6
+            + self.count_card_static::<{ CardType::Duchy as usize }>() * 3
+            + self.count_card_static::<{ CardType::Estate as usize }>() * 1
     }
 
     pub fn get_action(&self) -> u32 {
@@ -238,7 +237,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     fn province_end(&self) -> bool {
         self.province_in_supply() == 0
     }
-    
+
     fn colony_end(&self) -> bool {
         false
     }
@@ -246,22 +245,22 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     fn pile_end(&self) -> bool {
         let mut empty_pile = 0;
         if self.duchy.remaining_cards() == 0 {
-            empty_pile+=1;
+            empty_pile += 1;
         }
         if self.estate.remaining_cards() == 0 {
-            empty_pile+=1;
+            empty_pile += 1;
         }
         if self.gold.remaining_cards() == 0 {
-            empty_pile+=1;
+            empty_pile += 1;
         }
         if self.silver.remaining_cards() == 0 {
-            empty_pile+=1;
+            empty_pile += 1;
         }
         if self.copper.remaining_cards() == 0 {
-            empty_pile+=1;
+            empty_pile += 1;
         }
         if self.curse.remaining_cards() == 0 {
-            empty_pile+=1;
+            empty_pile += 1;
         }
         let end_condition = if N >= 4 { 3 } else { 4 };
         empty_pile >= end_condition
@@ -271,13 +270,17 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         self.province_end() || self.colony_end() || self.pile_end()
     }
 
-    pub fn run<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
+    pub fn run<T1: controller::Controller, T2: controller::Controller>(
+        &mut self,
+        t1: &mut T1,
+        t2: &mut T2,
+    ) -> [u32; 2] {
         for player in 0..2 {
             for _card in 0..5 {
                 self.players[player].draw();
             }
         }
-        let mut break_pos : u32 = 0;
+        let mut break_pos: u32 = 0;
         for _round in 1..100 {
             self.players[0].turn_start();
             t1.act::<Game<K, N>, 0>(self);
@@ -308,7 +311,11 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         }
     }
 
-    pub fn run_random<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
+    pub fn run_random<T1: controller::Controller, T2: controller::Controller>(
+        &mut self,
+        t1: &mut T1,
+        t2: &mut T2,
+    ) -> [u32; 2] {
         let mut rng = rand::thread_rng();
         let scheme = rng.gen_range(0..2);
 

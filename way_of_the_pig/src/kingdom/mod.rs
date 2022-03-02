@@ -1,8 +1,5 @@
-pub trait Kingdom {
-}
+pub trait Kingdom {}
 
-pub struct SimpleKingdom {
-}
+pub struct SimpleKingdom {}
 
-impl Kingdom for SimpleKingdom {
-}
+impl Kingdom for SimpleKingdom {}

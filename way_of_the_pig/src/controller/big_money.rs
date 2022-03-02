@@ -15,21 +15,20 @@
 //   Buy gold
 //   Buy duchy if remaining colony <= 6
 //   Buy silver
-use crate::game;
 use crate::card;
 use crate::controller;
+use crate::game;
 
-pub struct Controller {
-}
+pub struct Controller {}
 
 fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
-    game.get_player::<P>().count_card(card::CardType::Gold) * 3 +
-    game.get_player::<P>().count_card(card::CardType::Silver) * 2 +
-    game.get_player::<P>().count_card(card::CardType::Copper) * 1
+    game.get_player::<P>().count_card(card::CardType::Gold) * 3
+        + game.get_player::<P>().count_card(card::CardType::Silver) * 2
+        + game.get_player::<P>().count_card(card::CardType::Copper) * 1
 }
 
 impl Controller {
-    pub fn make() -> Controller{
+    pub fn make() -> Controller {
         Controller {}
     }
 }

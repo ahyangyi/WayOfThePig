@@ -1,13 +1,12 @@
 use crate::card;
 use crate::pile;
 
-pub struct Pile {
-}
+pub struct Pile {}
 
 impl pile::Pile for Pile {
     #[inline]
     fn make<const N: usize>() -> Self {
-        Pile{}
+        Pile {}
     }
 
     #[inline]

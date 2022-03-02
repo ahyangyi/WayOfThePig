@@ -1,17 +1,17 @@
-use bitflags::bitflags;
 use crate::game;
+use bitflags::bitflags;
 use num_derive::FromPrimitive;
 
-pub mod province;
+pub mod copper;
+pub mod curse;
 pub mod duchy;
 pub mod estate;
 pub mod gold;
-pub mod silver;
-pub mod copper;
-pub mod curse;
-pub mod platinum;
-pub mod smithy;
 pub mod patrol;
+pub mod platinum;
+pub mod province;
+pub mod silver;
+pub mod smithy;
 
 bitflags! {
     pub struct Type: u32 {
@@ -37,7 +37,7 @@ pub trait Card {
     fn play<G: game::GameState, const P: usize>(_g: &mut G) {}
 }
 
-#[derive(Copy,Clone,PartialEq,Debug,FromPrimitive)]
+#[derive(Copy, Clone, PartialEq, Debug, FromPrimitive)]
 pub enum CardType {
     // Base Cards
     Province,
@@ -81,13 +81,13 @@ macro_rules! make_dynamic_dispatch_fn {
     ( $f:ident, $m:ident, $t:ty, $d:expr ) => {
         pub fn $f(c: CardType) -> $t {
             match c {
-                CardType::Province => {province::Card::$m()},
-                CardType::Duchy => {duchy::Card::$m()},
-                CardType::Estate => {estate::Card::$m()},
+                CardType::Province => province::Card::$m(),
+                CardType::Duchy => duchy::Card::$m(),
+                CardType::Estate => estate::Card::$m(),
 
-                CardType::Platinum => {platinum::Card::$m()},
+                CardType::Platinum => platinum::Card::$m(),
 
-                _ => {$d}
+                _ => $d,
             }
         }
     };

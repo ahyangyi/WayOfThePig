@@ -1,8 +1,7 @@
-use crate::game;
 use crate::card;
+use crate::game;
 
-pub struct Card {
-}
+pub struct Card {}
 
 impl card::Card for Card {
     #[inline]

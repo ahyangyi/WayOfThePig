@@ -1,9 +1,8 @@
-use crate::game;
-use crate::card::CardType;
 use crate::card;
+use crate::card::CardType;
+use crate::game;
 
-pub struct Card {
-}
+pub struct Card {}
 
 impl card::Card for Card {
     #[inline]
@@ -22,11 +21,13 @@ impl card::Card for Card {
             g.get_player::<P>().draw();
         }
 
-        let mut m : Vec<CardType> = vec![];
+        let mut m: Vec<CardType> = vec![];
         for _i in 0..4 {
             let card = g.get_player::<P>().draw_to();
             match card {
-                None => {break;},
+                None => {
+                    break;
+                }
                 Some(x) => {
                     if card::static_type(x).contains(card::Type::VICTORY) {
                         g.get_player::<P>().hand[x as usize] += 1;

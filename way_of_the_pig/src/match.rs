@@ -12,6 +12,5 @@ impl Match {
             controller2: Controller2.make(),
         }
     }
-    fn run(&self) {
-    }
+    fn run(&self) {}
 }
