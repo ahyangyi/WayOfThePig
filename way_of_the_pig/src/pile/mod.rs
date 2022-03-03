@@ -71,5 +71,6 @@ make_simple_pile!(colony, Colony, [8, 8, 12, 12, 12]);
 make_simple_pile!(platinum, Platinum, [12, 12, 12, 12, 12]);
 
 make_simple_pile!(smithy, Smithy, [10, 10, 10, 10, 10]);
+make_simple_pile!(village, Village, [10, 10, 10, 10, 10]);
 make_simple_pile!(harem, Harem, [8, 8, 12, 12, 12]);
 make_simple_pile!(patrol, Patrol, [10, 10, 10, 10, 10]);

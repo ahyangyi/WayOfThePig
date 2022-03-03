@@ -64,6 +64,7 @@ pub trait GameState {
     fn buy_platinum<const P: usize>(&mut self) -> bool;
 
     fn buy_smithy<const P: usize>(&mut self) -> bool;
+    fn buy_village<const P: usize>(&mut self) -> bool;
     fn buy_patrol<const P: usize>(&mut self) -> bool;
     fn buy_harem<const P: usize>(&mut self) -> bool;
 
@@ -75,6 +76,7 @@ pub trait GameState {
     fn play_platinum<const P: usize>(&mut self) -> bool;
 
     fn play_smithy<const P: usize>(&mut self) -> bool;
+    fn play_village<const P: usize>(&mut self) -> bool;
     fn play_patrol<const P: usize>(&mut self) -> bool;
     fn play_harem<const P: usize>(&mut self) -> bool;
 
@@ -99,6 +101,7 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
     platinum: K::PlatinumPile,
 
     smithy: pile::smithy::Pile,
+    village: pile::village::Pile,
     patrol: pile::patrol::Pile,
     harem: pile::harem::Pile,
 
@@ -231,6 +234,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             colony: K::ColonyPile::make::<N>(),
             platinum: K::PlatinumPile::make::<N>(),
             smithy: pile::smithy::Pile::make::<N>(),
+            village: pile::village::Pile::make::<N>(),
             patrol: pile::patrol::Pile::make::<N>(),
             harem: pile::harem::Pile::make::<N>(),
             players: [(); N].map(|_| PersonalState::make()),
@@ -350,6 +354,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_buy_fn!(platinum, buy_platinum);
 
     make_simple_buy_fn!(smithy, buy_smithy);
+    make_simple_buy_fn!(village, buy_village);
     make_simple_buy_fn!(harem, buy_harem);
     make_simple_buy_fn!(patrol, buy_patrol);
 
@@ -360,6 +365,7 @@ impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
     make_simple_play_fn!(Platinum, platinum, play_platinum);
 
     make_simple_play_fn!(Smithy, smithy, play_smithy);
+    make_simple_play_fn!(Village, village, play_village);
 
     make_simple_play_fn!(Harem, harem, play_harem);
     make_simple_play_fn!(Patrol, patrol, play_patrol);
