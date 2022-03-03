@@ -7,7 +7,7 @@ use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
 use rand::seq::SliceRandom;
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
 use std::mem;
 
 macro_rules! make_simple_buy_fn {
@@ -295,7 +295,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         self.province_end() || self.colony_end() || self.pile_end()
     }
 
-    pub fn run<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
+    pub fn run<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) {
         for player in 0..2 {
             for _card in 0..5 {
                 self.players[player].draw();
@@ -331,29 +331,6 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
             [0, 0]
         };
         self.observer.notify_result_2(ret);
-
-        // FIXME: above was u8, below is u32
-        if vp_0 > vp_1 {
-            [0, 1]
-        } else if vp_0 < vp_1 {
-            [1, 0]
-        } else if break_pos == 0 {
-            [0, 1]
-        } else {
-            [0, 0]
-        }
-    }
-
-    pub fn run_random<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) -> [u32; 2] {
-        let mut rng = rand::thread_rng();
-        let scheme = rng.gen_range(0..2);
-
-        if scheme == 0 {
-            self.run(t1, t2)
-        } else {
-            let [r2, r1] = self.run(t2, t1);
-            [r1, r2]
-        }
     }
 }
 
