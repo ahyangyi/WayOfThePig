@@ -5,27 +5,18 @@ use way_of_the_pig::controller::smithy;
 use way_of_the_pig::controller::smithy_accidental_village;
 use way_of_the_pig::game;
 use way_of_the_pig::kingdom;
+use way_of_the_pig::observer;
 
 #[macro_export]
 macro_rules! round_robin {
     ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident ) => {
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
-            let result = a.run(&mut $x, &mut $y);
-            if result == [0, 1] {
-                $w[$i][$j] += 2;
-            } else if result == [0, 0] {
-                $w[$i][$j] += 1;
-            }
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, 2> = game::Game::make(&mut $w[$i][$j]);
+            a.run(&mut $x, &mut $y);
         }
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
-            let result = a.run(&mut $y, &mut $x);
-            if result == [0, 1] {
-                $w[$j][$i] += 2;
-            } else if result == [0, 0] {
-                $w[$j][$i] += 1;
-            }
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, 2> = game::Game::make(&mut $w[$j][$i]);
+            a.run(&mut $y, &mut $x);
         }
     };
     ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident, $($tail:ident),* ) => {
@@ -44,7 +35,7 @@ macro_rules! round_robin {
 }
 
 fn main() {
-    let mut w = [[0u32; 5]; 5];
+    let mut w = [[observer::default::WinDrawLoss::default(); 5]; 5];
     let mut p1: big_money::Controller = big_money::Controller::make();
     let mut p2: smithy::Controller = smithy::Controller::make();
     // let mut p2a: smithy_accidental_village::Controller = smithy_accidental_village::Controller::make();
@@ -60,8 +51,8 @@ fn main() {
     //    for j in i + 1..5 {
     for i in 0..4 {
         for j in i + 1..4 {
-            let p1 = w[i][j] as f64 / (2.0 * n as f64);
-            let p2 = 1.0 - (w[j][i] as f64 / (2.0 * n as f64));
+            let p1 = (w[i][j].win * 2 + w[i][j].draw) as f64 / (2.0 * n as f64);
+            let p2 = (w[j][i].loss * 2 + w[j][i].draw) as f64 / (2.0 * n as f64);
             println!("{} vs {}: {:.3} ({:.3}; {:.3})", names[i], names[j], (p1 + p2) / 2.0, p1, p2);
         }
     }

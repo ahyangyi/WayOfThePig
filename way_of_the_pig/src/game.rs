@@ -2,6 +2,7 @@ use crate::card;
 use crate::card::{Card, CardType};
 use crate::controller;
 use crate::kingdom;
+use crate::observer;
 use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
@@ -88,7 +89,7 @@ pub trait GameState {
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
 }
 
-pub struct Game<K: kingdom::Kingdom, const N: usize> {
+pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
     province: pile::province::Pile,
     duchy: pile::duchy::Pile,
     estate: pile::estate::Pile,
@@ -107,6 +108,8 @@ pub struct Game<K: kingdom::Kingdom, const N: usize> {
 
     players: [PersonalState; N],
     trash: Vec<CardType>,
+
+    observer: &'a mut O,
 }
 
 pub struct PersonalState {
@@ -221,9 +224,9 @@ impl PersonalState {
     }
 }
 
-impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
-    pub fn make() -> Game<K, N> {
-        let ret: Game<K, N> = Game {
+impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K, O, N> {
+    pub fn make(o: &'a mut O) -> Game<'a, K, O, N> {
+        let ret: Game<'a, K, O, N> = Game {
             province: pile::province::Pile::make::<N>(),
             duchy: pile::duchy::Pile::make::<N>(),
             estate: pile::estate::Pile::make::<N>(),
@@ -239,6 +242,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
             harem: pile::harem::Pile::make::<N>(),
             players: [(); N].map(|_| PersonalState::make()),
             trash: vec![],
+            observer: o,
         };
         ret
     }
@@ -300,15 +304,15 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         let mut break_pos: u32 = 0;
         for _round in 1..100 {
             self.players[0].turn_start();
-            t1.act::<Game<K, N>, 0>(self);
-            t1.buy::<Game<K, N>, 0>(self);
+            t1.act::<Game<K, O, N>, 0>(self);
+            t1.buy::<Game<K, O, N>, 0>(self);
             if self.end() {
                 break;
             }
             self.players[0].clean_up();
             self.players[1].turn_start();
-            t2.act::<Game<K, N>, 1>(self);
-            t2.buy::<Game<K, N>, 1>(self);
+            t2.act::<Game<K, O, N>, 1>(self);
+            t2.buy::<Game<K, O, N>, 1>(self);
             if self.end() {
                 break_pos = 1;
                 break;
@@ -317,6 +321,18 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
         }
         let vp_0 = self.players[0].total_final_vp();
         let vp_1 = self.players[1].total_final_vp();
+        let ret = if vp_0 > vp_1 {
+            [0, 1]
+        } else if vp_0 < vp_1 {
+            [1, 0]
+        } else if break_pos == 0 {
+            [0, 1]
+        } else {
+            [0, 0]
+        };
+        self.observer.notify_result_2(ret);
+
+        // FIXME: above was u8, below is u32
         if vp_0 > vp_1 {
             [0, 1]
         } else if vp_0 < vp_1 {
@@ -341,7 +357,7 @@ impl<K: kingdom::Kingdom, const N: usize> Game<K, N> {
     }
 }
 
-impl<K: kingdom::Kingdom, const N: usize> GameState for Game<K, N> {
+impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for Game<'_, K, O, N> {
     make_simple_buy_fn!(province, buy_province);
     make_simple_buy_fn!(duchy, buy_duchy);
     make_simple_buy_fn!(estate, buy_estate);
