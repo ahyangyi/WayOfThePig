@@ -8,8 +8,8 @@ use way_of_the_pig::kingdom;
 
 #[macro_export]
 macro_rules! round_robin {
-    ( @match $f:ident; $w:ident; $i:expr; $j:expr; $x:ident; $y:ident ) => {
-        for _i in 0..100000 {
+    ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident ) => {
+        for _i in 0..$n {
             let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
             let result = a.run(&mut $x, &mut $y);
             if result == [0, 1] {
@@ -18,7 +18,7 @@ macro_rules! round_robin {
                 $w[$i][$j] += 1;
             }
         }
-        for _i in 0..100000 {
+        for _i in 0..$n {
             let mut a: game::Game<kingdom::SimpleKingdom, 2> = game::Game::make();
             let result = a.run(&mut $y, &mut $x);
             if result == [0, 1] {
@@ -28,18 +28,18 @@ macro_rules! round_robin {
             }
         }
     };
-    ( @match $f:ident; $w:ident; $i:expr; $j:expr; $x:ident; $y:ident, $($tail:ident),* ) => {
-        round_robin!(@match $f; $w; $i; $j; $x; $y);
-        round_robin!(@match $f; $w; $i; $j+1usize; $x; $($tail),*);
+    ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident, $($tail:ident),* ) => {
+        round_robin!(@match $f; $w; $n; $i; $j; $x; $y);
+        round_robin!(@match $f; $w; $n; $i; $j+1usize; $x; $($tail),*);
     };
-    ( @match_array $f:ident; $w:ident; $i:expr; $x:ident ) => {
+    ( @match_array $f:ident; $w:ident; $n:expr; $i:expr; $x:ident ) => {
     };
-    ( @match_array $f:ident; $w:ident; $i:expr; $x:ident, $($tail:ident),* ) => {
-        round_robin!(@match $f; $w; $i; $i+1usize; $x; $($tail),*);
-        round_robin!(@match_array $f; $w; $i+1usize; $($tail),*);
+    ( @match_array $f:ident; $w:ident; $n:expr; $i:expr; $x:ident, $($tail:ident),* ) => {
+        round_robin!(@match $f; $w; $n; $i; $i+1usize; $x; $($tail),*);
+        round_robin!(@match_array $f; $w; $n; $i+1usize; $($tail),*);
     };
-    ( $f:ident; $w:ident; $($tail:ident),* ) => {
-        round_robin!(@match_array $f; $w; 0usize; $($tail),*);
+    ( $f:ident; $w:ident; $n:expr; $($tail:ident),* ) => {
+        round_robin!(@match_array $f; $w; $n; 0usize; $($tail),*);
     };
 }
 
@@ -50,8 +50,9 @@ fn main() {
     // let mut p2a: smithy_accidental_village::Controller = smithy_accidental_village::Controller::make();
     let mut p3: patrol::Controller = patrol::Controller::make();
     let mut p4: patrol_harem::Controller = patrol_harem::Controller::make();
+    let n = 100000;
     // round_robin!(a; w; p1, p2, p2a, p3, p4);
-    round_robin!(a; w; p1, p2, p3, p4);
+    round_robin!(a; w; n; p1, p2, p3, p4);
 
     // let names = ["bm", "smithy", "smithy_accidental_village", "patrol", "patrol+harem"];
     let names = ["bm", "smithy", "patrol", "patrol+harem"];
@@ -59,8 +60,8 @@ fn main() {
     //    for j in i + 1..5 {
     for i in 0..4 {
         for j in i + 1..4 {
-            let p1 = w[i][j] as f64 / 200000.0;
-            let p2 = 1.0 - (w[j][i] as f64 / 200000.0);
+            let p1 = w[i][j] as f64 / (2.0 * n as f64);
+            let p2 = 1.0 - (w[j][i] as f64 / (2.0 * n as f64));
             println!("{} vs {}: {:.3} ({:.3}; {:.3})", names[i], names[j], (p1 + p2) / 2.0, p1, p2);
         }
     }
