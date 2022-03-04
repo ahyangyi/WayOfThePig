@@ -87,6 +87,9 @@ pub trait GameState {
     fn colony_enabled(&self) -> bool;
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
+
+    // hooked effects
+    fn add_coin<const P: usize>(&mut self, c: u32);
 }
 
 pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
@@ -365,6 +368,11 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]
+    }
+
+    #[inline]
+    fn add_coin<const P: usize>(&mut self, c: u32) {
+        self.players[P].coin += c;
     }
 
     #[inline]
