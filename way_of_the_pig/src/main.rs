@@ -51,9 +51,7 @@ fn main() {
     //    for j in i + 1..5 {
     for i in 0..4 {
         for j in i + 1..4 {
-            let p1 = (w[i][j].win * 2 + w[i][j].draw) as f64 / (2.0 * n as f64);
-            let p2 = (w[j][i].loss * 2 + w[j][i].draw) as f64 / (2.0 * n as f64);
-            println!("{} vs {}: {:.3} ({:.3}; {:.3})", names[i], names[j], (p1 + p2) / 2.0, p1, p2);
+            println!("{} vs {}: {}", names[i], names[j], w[i][j].pair_stats(&w[j][i]));
         }
     }
 }

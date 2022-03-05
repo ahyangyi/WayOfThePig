@@ -25,3 +25,13 @@ impl observer::Observer for WinDrawLoss {
         }
     }
 }
+
+impl WinDrawLoss {
+    #[inline]
+    pub fn pair_stats(&self, other: &Self) -> String {
+        let n = self.win + self.draw + self.loss;
+        let p1 = (self.win * 2 + self.draw) as f64 / (2.0 * n as f64);
+        let p2 = (other.loss * 2 + other.draw) as f64 / (2.0 * n as f64);
+        format!("{:.3} ({:.3}; {:.3})", (p1 + p2) / 2.0, p1, p2)
+    }
+}
