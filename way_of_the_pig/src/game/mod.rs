@@ -8,7 +8,6 @@ use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
 use std::mem;
 
 mod run_round;
@@ -118,7 +117,7 @@ pub trait GameState {
     fn clean_up<const P: usize>(&mut self);
 }
 
-pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
+pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> {
     province: pile::province::Pile,
     duchy: pile::duchy::Pile,
     estate: pile::estate::Pile,
@@ -139,6 +138,7 @@ pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> 
     trash: Vec<CardType>,
 
     observer: &'a mut O,
+    rng: &'a mut RNG,
 }
 
 pub struct PersonalState {
@@ -198,25 +198,6 @@ impl PersonalState {
     }
 
     #[inline]
-    pub fn draw_to(&mut self) -> Option<CardType> {
-        if self.deck.len() == 0 {
-            self.discard.shuffle(&mut thread_rng());
-            mem::swap(&mut self.deck, &mut self.discard);
-        }
-        self.deck.pop()
-    }
-
-    pub fn draw(&mut self) {
-        let card = self.draw_to();
-        match card {
-            None => {}
-            Some(x) => {
-                self.hand[x as usize] += 1;
-            }
-        }
-    }
-
-    #[inline]
     pub fn gain(&mut self, c: CardType) {
         self.discard.push(c);
     }
@@ -258,10 +239,10 @@ impl PersonalState {
     }
 }
 
-impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> Game<'a, K, O, N> {
-    pub fn make(o: &'a mut O) -> Game<'a, K, O, N> {
+impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> Game<'a, K, O, RNG, N> {
+    pub fn make(o: &'a mut O, rng: &'a mut RNG) -> Game<'a, K, O, RNG, N> {
         let k = K::default();
-        let ret: Game<'a, K, O, N> = Game {
+        let ret: Game<'a, K, O, RNG, N> = Game {
             province: pile::province::Pile::make::<N>(),
             duchy: pile::duchy::Pile::make::<N>(),
             estate: pile::estate::Pile::make::<N>(),
@@ -278,6 +259,7 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> G
             players: [(); N].map(|_| PersonalState::make(k.use_shelter())),
             trash: vec![],
             observer: o,
+            rng: rng,
         };
         ret
     }
@@ -305,10 +287,9 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> G
         T1: controller::Controller,
         T2: controller::Controller,
     {
-        for player in 0..2 {
-            for _card in 0..5 {
-                self.players[player].draw();
-            }
+        for _card in 0..5 {
+            self.draw::<0>();
+            self.draw::<1>();
         }
         let mut break_pos: u32 = 0;
         for round in 0..100 {
@@ -333,9 +314,10 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> G
     }
 }
 
-impl<K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> GameState for Game<'_, K, O, N> {
+impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> GameState
+    for Game<'_, K, O, RNG, N>
+{
     type Observer = O;
-
     make_simple_buy_fn!(province, buy_province);
     make_simple_buy_fn!(duchy, buy_duchy);
     make_simple_buy_fn!(estate, buy_estate);
@@ -399,12 +381,22 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> GameS
 
     #[inline]
     fn draw_to<const P: usize>(&mut self) -> Option<CardType> {
-        self.players[P].draw_to()
+        if self.players[P].deck.len() == 0 {
+            self.players[P].discard.shuffle(&mut self.rng);
+            mem::swap(&mut self.players[P].deck, &mut self.players[P].discard);
+        }
+        self.players[P].deck.pop()
     }
 
     #[inline]
     fn draw<const P: usize>(&mut self) {
-        self.players[P].draw()
+        let card = self.draw_to::<P>();
+        match card {
+            None => {}
+            Some(x) => {
+                self.players[P].hand[x as usize] += 1;
+            }
+        }
     }
 
     fn end(&self) -> bool {

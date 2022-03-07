@@ -10,12 +10,13 @@ use way_of_the_pig::observer;
 #[macro_export]
 macro_rules! round_robin {
     ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident ) => {
+        let mut rng = rand::thread_rng();
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, 2> = game::Game::make(&mut $w[$i][$j]);
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, 2> = game::Game::make(&mut $w[$i][$j], &mut rng);
             a.run(&mut $x, &mut $y);
         }
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, 2> = game::Game::make(&mut $w[$j][$i]);
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, 2> = game::Game::make(&mut $w[$j][$i], &mut rng);
             a.run(&mut $y, &mut $x);
         }
     };
