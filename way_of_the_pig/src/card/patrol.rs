@@ -23,7 +23,7 @@ impl card::Card for Card {
 
         let mut m: Vec<CardType> = vec![];
         for _i in 0..4 {
-            let card = g.get_player::<P>().draw_to();
+            let card = g.draw_to::<P>();
             match card {
                 None => {
                     break;

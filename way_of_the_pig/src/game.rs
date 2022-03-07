@@ -90,6 +90,8 @@ pub trait GameState {
 
     // hooked effects
     fn add_coin<const P: usize>(&mut self, c: u32);
+    fn draw_to<const P: usize>(&mut self) -> Option<CardType>;
+    fn draw<const P: usize>(&mut self);
 }
 
 pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
@@ -388,5 +390,15 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
     #[inline]
     fn colony_enabled(&self) -> bool {
         self.colony.enabled()
+    }
+
+    #[inline]
+    fn draw_to<const P: usize>(&mut self) -> Option<CardType> {
+        self.players[P].draw_to()
+    }
+
+    #[inline]
+    fn draw<const P: usize>(&mut self) {
+        self.players[P].draw()
     }
 }
