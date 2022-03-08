@@ -307,7 +307,8 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
             }
         }
         let mut break_pos: u32 = 0;
-        for _round in 1..100 {
+        for round in 1..100 {
+            self.observer.notify_turn::<0>(round);
             self.players[0].turn_start();
             t1.act::<Game<K, O, N>, 0>(self);
             t1.buy::<Game<K, O, N>, 0>(self);
@@ -315,6 +316,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
                 break;
             }
             self.players[0].clean_up();
+            self.observer.notify_turn::<1>(round);
             self.players[1].turn_start();
             t2.act::<Game<K, O, N>, 1>(self);
             t2.buy::<Game<K, O, N>, 1>(self);
