@@ -115,6 +115,7 @@ pub trait GameState {
 
     // internal stuff
     fn end(&self) -> bool;
+    fn clean_up<const P: usize>(&mut self);
 }
 
 pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
@@ -224,19 +225,6 @@ impl PersonalState {
         self.action = 1;
         self.buy = 1;
         self.coin = 0;
-    }
-
-    pub fn clean_up(&mut self) {
-        for i in 0..CARDTYPES {
-            for _j in 0..self.hand[i] {
-                self.discard.push(FromPrimitive::from_usize(i).unwrap());
-            }
-            self.hand[i] = 0;
-        }
-        self.discard.append(&mut self.play);
-        for _card in 0..5 {
-            self.draw();
-        }
     }
 
     // only guarantees meaningful results at game end
@@ -421,5 +409,18 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> GameS
 
     fn end(&self) -> bool {
         self.province_end() || self.colony_end() || self.pile_end()
+    }
+
+    fn clean_up<const P: usize>(&mut self) {
+        for i in 0..CARDTYPES {
+            for _j in 0..self.players[P].hand[i] {
+                self.players[P].discard.push(FromPrimitive::from_usize(i).unwrap());
+            }
+            self.players[P].hand[i] = 0;
+        }
+        self.players[P].discard.append(&mut self.players[P].play);
+        for _card in 0..5 {
+            self.draw::<P>();
+        }
     }
 }
