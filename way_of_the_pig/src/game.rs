@@ -375,6 +375,7 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
     #[inline]
     fn add_coin<const P: usize>(&mut self, c: u32) {
         self.players[P].coin += c;
+        self.observer.add_coin::<P>(c);
     }
 
     #[inline]
