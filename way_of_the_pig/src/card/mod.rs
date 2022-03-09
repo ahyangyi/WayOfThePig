@@ -24,6 +24,9 @@ pub mod village;
 pub mod harem;
 pub mod patrol;
 
+// Hinterlands
+pub mod oasis;
+
 bitflags! {
     pub struct Type: u32 {
         const NONE = 0;
@@ -113,6 +116,8 @@ macro_rules! make_dynamic_dispatch_fn {
 
                 CardType::Harem => harem::Card::$m(),
                 CardType::Patrol => patrol::Card::$m(),
+
+                CardType::Oasis => oasis::Card::$m(),
 
                 _ => $d,
             }
