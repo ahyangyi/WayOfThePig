@@ -49,6 +49,18 @@ macro_rules! make_simple_play_fn {
     };
 }
 
+macro_rules! count_empty_pile {
+    ( $self:ident, $cnt:ident; $c:ident ) => {
+        if $self.$c.enabled() && $self.$c.remaining_cards() == 0 {
+            $cnt += 1;
+        }
+    };
+    ( $self:ident, $cnt:ident; $c:ident, $($tail:ident),* ) => {
+        count_empty_pile!($self, $cnt; $c);
+        count_empty_pile!($self, $cnt; $($tail),*);
+    };
+}
+
 const CARDTYPES: usize = 23;
 
 pub trait GameState {
@@ -265,33 +277,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
     #[inline]
     fn pile_end(&self) -> bool {
         let mut empty_pile = 0;
-        if self.duchy.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.estate.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.gold.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.silver.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.copper.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.curse.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.smithy.enabled() && self.smithy.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.harem.enabled() && self.harem.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
-        if self.patrol.enabled() && self.patrol.remaining_cards() == 0 {
-            empty_pile += 1;
-        }
+        count_empty_pile!(self, empty_pile; duchy, estate, gold, silver, copper, curse, smithy, village, harem, patrol);
         let end_condition = if N >= 4 { 3 } else { 4 };
         empty_pile >= end_condition
     }
