@@ -17,6 +17,7 @@ pub mod platinum;
 
 // Base Set
 pub mod market;
+pub mod militia;
 pub mod smithy;
 pub mod village;
 
@@ -111,6 +112,7 @@ macro_rules! make_dynamic_dispatch_fn {
                 CardType::Platinum => platinum::Card::$m(),
 
                 CardType::Market => market::Card::$m(),
+                CardType::Militia => militia::Card::$m(),
                 CardType::Smithy => smithy::Card::$m(),
                 CardType::Village => village::Card::$m(),
 
