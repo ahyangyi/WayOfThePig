@@ -70,6 +70,8 @@ make_simple_pile!(curse, Curse, [10, 20, 30, 40, 50]);
 make_simple_pile!(colony, Colony, [8, 8, 12, 12, 12]);
 make_simple_pile!(platinum, Platinum, [12, 12, 12, 12, 12]);
 
+make_simple_pile!(market, Market, [10, 10, 10, 10, 10]);
+make_simple_pile!(militia, Militia, [10, 10, 10, 10, 10]);
 make_simple_pile!(smithy, Smithy, [10, 10, 10, 10, 10]);
 make_simple_pile!(village, Village, [10, 10, 10, 10, 10]);
 make_simple_pile!(harem, Harem, [8, 8, 12, 12, 12]);
