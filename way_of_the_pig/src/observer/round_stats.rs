@@ -25,6 +25,15 @@ impl observer::Observer for RoundStats {
 }
 
 impl RoundStats {
+    pub fn default() -> Self {
+        RoundStats {
+            coin: [[0; MAX_ROUND]; 2],
+            vp: [[0; MAX_ROUND]; 2],
+            round: [[0; MAX_ROUND]; 2],
+            current_round: 0,
+        }
+    }
+
     pub fn pair_stats(&self, other: &Self) -> String {
         let mut s: String = Default::default();
 
@@ -32,7 +41,21 @@ impl RoundStats {
             for j in 0..MAX_ROUND {
                 let a = self.coin[i][j];
                 let b = other.coin[1 - i][j];
-                let s2 = format!("P{} R{}: {:.3} ({:.3}; {:.3})\n", i, j, ((a + b) as f32) / 2.0, a, b);
+                let ar = self.round[i][j];
+                let br = other.round[1 - i][j];
+                if ar == 0 && br == 0 {
+                    break;
+                }
+                let ac = (a as f32) / (ar as f32);
+                let bc = (b as f32) / (br as f32);
+                let s2 = format!(
+                    "P{} R{}: {:.3} ({:.3} {:.3})\n",
+                    i,
+                    j,
+                    ((a + b) as f32) / ((ar + br) as f32),
+                    ac,
+                    bc
+                );
                 s.push_str(&s2);
             }
         }

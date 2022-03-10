@@ -11,11 +11,11 @@ use way_of_the_pig::observer;
 macro_rules! round_robin {
     ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident ) => {
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, 2> = game::Game::make(&mut $w[$i][$j]);
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::round_stats::RoundStats, 2> = game::Game::make(&mut $w[$i][$j]);
             a.run(&mut $x, &mut $y);
         }
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, 2> = game::Game::make(&mut $w[$j][$i]);
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::round_stats::RoundStats, 2> = game::Game::make(&mut $w[$j][$i]);
             a.run(&mut $y, &mut $x);
         }
     };
@@ -35,7 +35,7 @@ macro_rules! round_robin {
 }
 
 fn main() {
-    let mut w = [[observer::default::WinDrawLoss::default(); 5]; 5];
+    let mut w = [[observer::round_stats::RoundStats::default(); 5]; 5];
     let mut p1: big_money::Controller = big_money::Controller::make();
     let mut p2: smithy::Controller = smithy::Controller::make();
     // let mut p2a: smithy_accidental_village::Controller = smithy_accidental_village::Controller::make();

@@ -7,12 +7,6 @@ pub struct WinDrawLoss {
     pub loss: u32,
 }
 
-impl WinDrawLoss {
-    pub fn default() -> WinDrawLoss {
-        WinDrawLoss { win: 0, draw: 0, loss: 0 }
-    }
-}
-
 impl observer::Observer for WinDrawLoss {
     #[inline]
     fn notify_result_2(&mut self, result: [u8; 2]) {
@@ -27,6 +21,10 @@ impl observer::Observer for WinDrawLoss {
 }
 
 impl WinDrawLoss {
+    pub fn default() -> WinDrawLoss {
+        WinDrawLoss { win: 0, draw: 0, loss: 0 }
+    }
+
     #[inline]
     pub fn pair_stats(&self, other: &Self) -> String {
         let n = self.win + self.draw + self.loss;
