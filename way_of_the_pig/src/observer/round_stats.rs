@@ -24,8 +24,8 @@ impl observer::Observer for RoundStats {
     }
 }
 
-impl RoundStats {
-    pub fn default() -> Self {
+impl Default for RoundStats {
+    fn default() -> Self {
         RoundStats {
             coin: [[0; MAX_ROUND]; 2],
             vp: [[0; MAX_ROUND]; 2],
@@ -33,7 +33,9 @@ impl RoundStats {
             current_round: 0,
         }
     }
+}
 
+impl RoundStats {
     pub fn pair_stats(&self, other: &Self) -> String {
         let mut s: String = Default::default();
 

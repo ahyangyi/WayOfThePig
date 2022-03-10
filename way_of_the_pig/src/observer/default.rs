@@ -1,6 +1,6 @@
 use crate::observer;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub struct WinDrawLoss {
     pub win: u32,
     pub draw: u32,
@@ -21,10 +21,6 @@ impl observer::Observer for WinDrawLoss {
 }
 
 impl WinDrawLoss {
-    pub fn default() -> WinDrawLoss {
-        WinDrawLoss { win: 0, draw: 0, loss: 0 }
-    }
-
     #[inline]
     pub fn pair_stats(&self, other: &Self) -> String {
         let n = self.win + self.draw + self.loss;
