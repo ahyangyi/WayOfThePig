@@ -319,7 +319,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         } else if vp_0 < vp_1 {
             [1, 0]
         } else if break_pos == 0 {
-            [0, 1]
+            [1, 0]
         } else {
             [0, 0]
         };
