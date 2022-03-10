@@ -24,6 +24,7 @@ pub mod village;
 // Intrigue
 pub mod harem;
 pub mod patrol;
+pub mod upgrade;
 
 // Hinterlands
 pub mod oasis;
@@ -118,6 +119,7 @@ macro_rules! make_dynamic_dispatch_fn {
 
                 CardType::Harem => harem::Card::$m(),
                 CardType::Patrol => patrol::Card::$m(),
+                CardType::Upgrade => upgrade::Card::$m(),
 
                 CardType::Oasis => oasis::Card::$m(),
 
