@@ -44,6 +44,26 @@ bitflags! {
         const DURATION = 0x20;
         const REACTION = 0x40;
         const COMMAND = 0x80;
+
+        // Single-expansion types;
+        const DOOM = 0x100;
+        const FATE = 0x200;
+        const HEIRLOOM = 0x400;
+        const LIAISON = 0x800;
+        const LOOTER = 0x1000;
+        const NIGHT = 0x2000;
+        const RESERVE = 0x4000;
+        const RUINS = 0x8000;
+        const SHELTER = 0x10000;
+
+        // Split piles
+        const KNIGHT = 0x100000;
+        const CASTLE = 0x200000;
+        const AUGUR = 0x400000;
+        const FORT = 0x800000;
+        const ODYSSEY = 0x1000000;
+        const TOWNSFOLK = 0x2000000;
+        const WIZARD = 0x4000000;
     }
 }
 
