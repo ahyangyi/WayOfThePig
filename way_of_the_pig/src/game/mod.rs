@@ -3,6 +3,7 @@ use crate::card::{Card, CardType};
 use crate::controller;
 use crate::kingdom;
 use crate::observer;
+use crate::observer::Observer;
 use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
@@ -63,8 +64,44 @@ macro_rules! count_empty_pile {
 
 const CARDTYPES: usize = 23;
 
+pub trait RoundPlayer {
+    fn run<G>(&mut self, game: &mut G, round: u32) -> i8
+    where
+        G: GameState;
+}
+
+impl<T1, T2> RoundPlayer for (&mut T1, &mut T2)
+where
+    T1: controller::Controller,
+    T2: controller::Controller,
+{
+    #[inline]
+    fn run<G>(&mut self, game: &mut G, round: u32) -> i8
+    where
+        G: GameState,
+    {
+        game.get_observer().notify_turn::<0>(round);
+        game.get_player::<0>().turn_start();
+        self.0.act::<G, 0>(game);
+        self.0.buy::<G, 0>(game);
+        if game.end() {
+            return 0;
+        }
+        game.get_player::<0>().clean_up();
+        game.get_observer().notify_turn::<1>(round);
+        game.get_player::<1>().turn_start();
+        self.1.act::<G, 1>(game);
+        self.1.buy::<G, 1>(game);
+        if game.end() {
+            return 1;
+        }
+        game.get_player::<1>().clean_up();
+        -1
+    }
+}
+
 pub trait GameState {
-    type Observer;
+    type Observer: observer::Observer;
 
     // buy APIs
     fn buy_province<const P: usize>(&mut self) -> bool;
@@ -107,6 +144,9 @@ pub trait GameState {
     fn add_coin<const P: usize>(&mut self, c: u32);
     fn draw_to<const P: usize>(&mut self) -> Option<CardType>;
     fn draw<const P: usize>(&mut self);
+
+    // internal stuff
+    fn end(&self) -> bool;
 }
 
 pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
@@ -285,35 +325,6 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         empty_pile >= end_condition
     }
 
-    fn end(&self) -> bool {
-        self.province_end() || self.colony_end() || self.pile_end()
-    }
-
-    #[inline]
-    fn run_round<T1, T2>(&mut self, (t1, t2): (&mut T1, &mut T2), round: u32) -> i8
-    where
-        T1: controller::Controller,
-        T2: controller::Controller,
-    {
-        self.get_observer().notify_turn::<0>(round);
-        self.get_player::<0>().turn_start();
-        t1.act::<Self, 0>(self);
-        t1.buy::<Self, 0>(self);
-        if self.end() {
-            return 0;
-        }
-        self.get_player::<0>().clean_up();
-        self.get_observer().notify_turn::<1>(round);
-        self.get_player::<1>().turn_start();
-        t2.act::<Self, 1>(self);
-        t2.buy::<Self, 1>(self);
-        if self.end() {
-            return 1;
-        }
-        self.get_player::<1>().clean_up();
-        -1
-    }
-
     pub fn run<T1, T2>(&mut self, t1: &mut T1, t2: &mut T2)
     where
         T1: controller::Controller,
@@ -326,7 +337,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         }
         let mut break_pos: u32 = 0;
         for round in 0..100 {
-            let ret = self.run_round::<T1, T2>((t1, t2), round);
+            let ret = (&mut *t1, &mut *t2).run::<Self>(self, round);
             if ret >= 0 {
                 break_pos = ret as u32;
                 break;
@@ -417,5 +428,9 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
     #[inline]
     fn draw<const P: usize>(&mut self) {
         self.players[P].draw()
+    }
+
+    fn end(&self) -> bool {
+        self.province_end() || self.colony_end() || self.pile_end()
     }
 }
