@@ -65,7 +65,7 @@ macro_rules! count_empty_pile {
 const CARDTYPES: usize = 23;
 
 pub trait RoundPlayer {
-    fn run<G>(&mut self, game: &mut G, round: u32) -> i8
+    fn run_round<G>(&mut self, game: &mut G, round: u32) -> i8
     where
         G: GameState;
 }
@@ -76,7 +76,7 @@ where
     T2: controller::Controller,
 {
     #[inline]
-    fn run<G>(&mut self, game: &mut G, round: u32) -> i8
+    fn run_round<G>(&mut self, game: &mut G, round: u32) -> i8
     where
         G: GameState,
     {
@@ -337,7 +337,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         }
         let mut break_pos: u32 = 0;
         for round in 0..100 {
-            let ret = (&mut *t1, &mut *t2).run::<Self>(self, round);
+            let ret = (&mut *t1, &mut *t2).run_round::<Self>(self, round);
             if ret >= 0 {
                 break_pos = ret as u32;
                 break;
