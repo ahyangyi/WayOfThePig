@@ -287,19 +287,23 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
     }
 
     #[inline]
-    fn run_round<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2, round: u32) -> i8 {
+    fn run_round<T1, T2>(&mut self, (t1, t2): (&mut T1, &mut T2), round: u32) -> i8
+    where
+        T1: controller::Controller,
+        T2: controller::Controller,
+    {
         self.observer.notify_turn::<0>(round);
         self.players[0].turn_start();
-        t1.act::<Game<K, O, N>, 0>(self);
-        t1.buy::<Game<K, O, N>, 0>(self);
+        t1.act::<Self, 0>(self);
+        t1.buy::<Self, 0>(self);
         if self.end() {
             return 0;
         }
         self.players[0].clean_up();
         self.observer.notify_turn::<1>(round);
         self.players[1].turn_start();
-        t2.act::<Game<K, O, N>, 1>(self);
-        t2.buy::<Game<K, O, N>, 1>(self);
+        t2.act::<Self, 1>(self);
+        t2.buy::<Self, 1>(self);
         if self.end() {
             return 1;
         }
@@ -315,7 +319,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         }
         let mut break_pos: u32 = 0;
         for round in 0..100 {
-            let ret = self.run_round::<T1, T2>(t1, t2, round);
+            let ret = self.run_round::<T1, T2>((t1, t2), round);
             if ret >= 0 {
                 break_pos = ret as u32;
                 break;
