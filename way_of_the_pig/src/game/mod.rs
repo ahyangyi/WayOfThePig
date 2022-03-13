@@ -64,6 +64,8 @@ macro_rules! count_empty_pile {
 const CARDTYPES: usize = 23;
 
 pub trait GameState {
+    type Observer;
+
     // buy APIs
     fn buy_province<const P: usize>(&mut self) -> bool;
     fn buy_duchy<const P: usize>(&mut self) -> bool;
@@ -99,6 +101,7 @@ pub trait GameState {
     fn colony_enabled(&self) -> bool;
 
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState;
+    fn get_observer(&mut self) -> &mut Self::Observer;
 
     // hooked effects
     fn add_coin<const P: usize>(&mut self, c: u32);
@@ -292,26 +295,30 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         T1: controller::Controller,
         T2: controller::Controller,
     {
-        self.observer.notify_turn::<0>(round);
-        self.players[0].turn_start();
+        self.get_observer().notify_turn::<0>(round);
+        self.get_player::<0>().turn_start();
         t1.act::<Self, 0>(self);
         t1.buy::<Self, 0>(self);
         if self.end() {
             return 0;
         }
-        self.players[0].clean_up();
-        self.observer.notify_turn::<1>(round);
-        self.players[1].turn_start();
+        self.get_player::<0>().clean_up();
+        self.get_observer().notify_turn::<1>(round);
+        self.get_player::<1>().turn_start();
         t2.act::<Self, 1>(self);
         t2.buy::<Self, 1>(self);
         if self.end() {
             return 1;
         }
-        self.players[1].clean_up();
+        self.get_player::<1>().clean_up();
         -1
     }
 
-    pub fn run<T1: controller::Controller, T2: controller::Controller>(&mut self, t1: &mut T1, t2: &mut T2) {
+    pub fn run<T1, T2>(&mut self, t1: &mut T1, t2: &mut T2)
+    where
+        T1: controller::Controller,
+        T2: controller::Controller,
+    {
         for player in 0..2 {
             for _card in 0..5 {
                 self.players[player].draw();
@@ -341,6 +348,8 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
 }
 
 impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for Game<'_, K, O, N> {
+    type Observer = O;
+
     make_simple_buy_fn!(province, buy_province);
     make_simple_buy_fn!(duchy, buy_duchy);
     make_simple_buy_fn!(estate, buy_estate);
@@ -369,8 +378,14 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
     make_simple_play_fn!(Harem, harem, play_harem);
     make_simple_play_fn!(Patrol, patrol, play_patrol);
 
+    #[inline]
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
         &mut self.players[P]
+    }
+
+    #[inline]
+    fn get_observer(&mut self) -> &mut O {
+        self.observer
     }
 
     #[inline]
