@@ -148,6 +148,10 @@ pub struct PersonalState {
     pub action: u32,
     pub buy: u32,
     pub coin: u32,
+    pub vp: u32,
+    pub coffer: u32,
+    pub villager: u32,
+    pub favor: u32,
 }
 
 impl PersonalState {
@@ -172,6 +176,10 @@ impl PersonalState {
             action: 0,
             buy: 0,
             coin: 0,
+            vp: 0,
+            coffer: 0,
+            villager: 0,
+            favor: 0,
         };
         ret.deck_stats[CardType::Copper as usize] = 7;
         ret.deck_stats[CardType::Estate as usize] = 3;
@@ -228,6 +236,7 @@ impl PersonalState {
             + self.count_card_static::<{ CardType::Duchy as usize }>() * 3
             + self.count_card_static::<{ CardType::Estate as usize }>() * 1
             + self.count_card_static::<{ CardType::Harem as usize }>() * 2
+            + self.vp
     }
 
     pub fn get_action(&self) -> u32 {
