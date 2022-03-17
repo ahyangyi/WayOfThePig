@@ -11,6 +11,7 @@ pub trait Kingdom {
     }
 }
 
+#[derive(Default)]
 pub struct SimpleKingdom {}
 
 impl Kingdom for SimpleKingdom {
@@ -18,6 +19,7 @@ impl Kingdom for SimpleKingdom {
     type PlatinumPile = pile::none::Pile;
 }
 
+#[derive(Default)]
 pub struct ProsperityKingdom {}
 
 impl Kingdom for ProsperityKingdom {
@@ -25,6 +27,7 @@ impl Kingdom for ProsperityKingdom {
     type PlatinumPile = pile::platinum::Pile;
 }
 
+#[derive(Default)]
 pub struct DarkAgeKingdom {}
 
 impl Kingdom for DarkAgeKingdom {

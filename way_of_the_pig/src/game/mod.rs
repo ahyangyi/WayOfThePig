@@ -155,13 +155,10 @@ pub struct PersonalState {
 }
 
 impl PersonalState {
-    pub fn make() -> PersonalState {
+    pub fn make(use_shelter: bool) -> PersonalState {
         let mut ret = PersonalState {
             deck: vec![],
             discard: vec![
-                CardType::Estate,
-                CardType::Estate,
-                CardType::Estate,
                 CardType::Copper,
                 CardType::Copper,
                 CardType::Copper,
@@ -182,7 +179,19 @@ impl PersonalState {
             favor: 0,
         };
         ret.deck_stats[CardType::Copper as usize] = 7;
-        ret.deck_stats[CardType::Estate as usize] = 3;
+        if use_shelter {
+            ret.discard.push(CardType::Hovel);
+            ret.discard.push(CardType::Necropolis);
+            ret.discard.push(CardType::OvergrownEstate);
+            ret.deck_stats[CardType::Hovel as usize] += 1;
+            ret.deck_stats[CardType::Necropolis as usize] += 1;
+            ret.deck_stats[CardType::OvergrownEstate as usize] += 1;
+        } else {
+            ret.discard.push(CardType::Estate);
+            ret.discard.push(CardType::Estate);
+            ret.discard.push(CardType::Estate);
+            ret.deck_stats[CardType::Estate as usize] = 3;
+        }
         ret
     }
 
@@ -260,8 +269,9 @@ impl PersonalState {
     }
 }
 
-impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K, O, N> {
+impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> Game<'a, K, O, N> {
     pub fn make(o: &'a mut O) -> Game<'a, K, O, N> {
+        let k = K::default();
         let ret: Game<'a, K, O, N> = Game {
             province: pile::province::Pile::make::<N>(),
             duchy: pile::duchy::Pile::make::<N>(),
@@ -276,7 +286,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
             village: pile::village::Pile::make::<N>(),
             patrol: pile::patrol::Pile::make::<N>(),
             harem: pile::harem::Pile::make::<N>(),
-            players: [(); N].map(|_| PersonalState::make()),
+            players: [(); N].map(|_| PersonalState::make(k.use_shelter())),
             trash: vec![],
             observer: o,
         };
@@ -334,7 +344,7 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
     }
 }
 
-impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for Game<'_, K, O, N> {
+impl<K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> GameState for Game<'_, K, O, N> {
     type Observer = O;
 
     make_simple_buy_fn!(province, buy_province);
