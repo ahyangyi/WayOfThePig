@@ -15,6 +15,9 @@ pub mod silver;
 pub mod colony;
 pub mod platinum;
 
+// Shelter
+pub mod necropolis;
+
 // Base Set
 pub mod market;
 pub mod militia;
