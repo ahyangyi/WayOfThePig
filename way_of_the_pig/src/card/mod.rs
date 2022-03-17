@@ -17,6 +17,7 @@ pub mod platinum;
 
 // Shelter
 pub mod necropolis;
+pub mod overgrown_estate;
 
 // Base Set
 pub mod market;
