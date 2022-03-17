@@ -94,6 +94,8 @@ pub trait GameState {
 
     fn play_platinum<const P: usize>(&mut self) -> bool;
 
+    fn play_necropolis<const P: usize>(&mut self) -> bool;
+
     fn play_smithy<const P: usize>(&mut self) -> bool;
     fn play_village<const P: usize>(&mut self) -> bool;
     fn play_patrol<const P: usize>(&mut self) -> bool;
@@ -368,6 +370,8 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, const N: usize> GameS
     make_simple_play_fn!(Copper, copper, play_copper);
 
     make_simple_play_fn!(Platinum, platinum, play_platinum);
+
+    make_simple_play_fn!(Necropolis, necropolis, play_necropolis);
 
     make_simple_play_fn!(Smithy, smithy, play_smithy);
     make_simple_play_fn!(Village, village, play_village);
