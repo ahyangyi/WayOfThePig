@@ -16,6 +16,7 @@ pub mod colony;
 pub mod platinum;
 
 // Shelter
+pub mod hovel;
 pub mod necropolis;
 pub mod overgrown_estate;
 
@@ -135,6 +136,10 @@ macro_rules! make_dynamic_dispatch_fn {
 
                 CardType::Colony => colony::Card::$m(),
                 CardType::Platinum => platinum::Card::$m(),
+
+                CardType::Hovel => hovel::Card::$m(),
+                CardType::Necropolis => necropolis::Card::$m(),
+                CardType::OvergrownEstate => overgrown_estate::Card::$m(),
 
                 CardType::Market => market::Card::$m(),
                 CardType::Militia => militia::Card::$m(),
