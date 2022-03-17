@@ -21,6 +21,7 @@ pub mod necropolis;
 pub mod overgrown_estate;
 
 // Base Set
+pub mod festival;
 pub mod market;
 pub mod militia;
 pub mod smithy;
