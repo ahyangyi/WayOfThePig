@@ -29,6 +29,8 @@ impl Controller {
 
 impl controller::Controller for Controller {
     fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
+        game.play_necropolis::<P>();
+        game.play_patrol::<P>();
         game.play_patrol::<P>();
     }
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
