@@ -47,7 +47,7 @@ macro_rules! make_simple_play_fn {
             }
             self.players[P].hand[CardType::$card as usize] -= 1;
             self.players[P].play.push(CardType::$card);
-            card::$c::Card::play::<Self, P>(self);
+            card::$c::Card::on_play::<Self, P>(self);
             true
         }
     };
