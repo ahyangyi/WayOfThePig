@@ -4,7 +4,6 @@ use crate::controller;
 use crate::game::run_round::RoundPlayer;
 use crate::kingdom;
 use crate::observer;
-use crate::observer::Observer;
 use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
