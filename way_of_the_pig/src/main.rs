@@ -1,8 +1,8 @@
 use way_of_the_pig::controller::big_money;
+use way_of_the_pig::controller::faithful_hound;
 use way_of_the_pig::controller::patrol;
 use way_of_the_pig::controller::patrol_harem;
 use way_of_the_pig::controller::smithy;
-use way_of_the_pig::controller::smithy_accidental_village;
 use way_of_the_pig::game;
 use way_of_the_pig::kingdom;
 use way_of_the_pig::observer;
@@ -39,19 +39,15 @@ fn main() {
     let mut w = [[observer::default::WinDrawLoss::default(); 5]; 5];
     let mut p1: big_money::Controller = big_money::Controller::make();
     let mut p2: smithy::Controller = smithy::Controller::make();
-    // let mut p2a: smithy_accidental_village::Controller = smithy_accidental_village::Controller::make();
     let mut p3: patrol::Controller = patrol::Controller::make();
     let mut p4: patrol_harem::Controller = patrol_harem::Controller::make();
+    let mut p5: faithful_hound::Controller = faithful_hound::Controller::make();
     let n = 100000;
-    // round_robin!(a; w; p1, p2, p2a, p3, p4);
-    round_robin!(a; w; n; p1, p2, p3, p4);
+    round_robin!(a; w; n; p1, p2, p3, p4, p5);
 
-    // let names = ["bm", "smithy", "smithy_accidental_village", "patrol", "patrol+harem"];
-    let names = ["bm", "smithy", "patrol", "patrol+harem"];
-    //for i in 0..5 {
-    //    for j in i + 1..5 {
-    for i in 0..4 {
-        for j in i + 1..4 {
+    let names = ["bm", "smithy", "patrol", "patrol+harem", "faithful hound"];
+    for i in 0..5 {
+        for j in i + 1..5 {
             println!("{} vs {}: {}", names[i], names[j], w[i][j].pair_stats(&w[j][i]));
         }
     }

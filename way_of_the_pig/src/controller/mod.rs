@@ -2,6 +2,7 @@ use crate::card::CardType;
 use crate::game;
 
 pub mod big_money;
+pub mod faithful_hound;
 pub mod patrol;
 pub mod patrol_harem;
 pub mod smithy;

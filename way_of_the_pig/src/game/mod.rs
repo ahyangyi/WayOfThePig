@@ -85,6 +85,8 @@ pub trait GameState {
     fn buy_patrol<const P: usize>(&mut self) -> bool;
     fn buy_harem<const P: usize>(&mut self) -> bool;
 
+    fn buy_faithful_hound<const P: usize>(&mut self) -> bool;
+
     // play APIs
     fn play_gold<const P: usize>(&mut self) -> bool;
     fn play_silver<const P: usize>(&mut self) -> bool;
@@ -96,8 +98,11 @@ pub trait GameState {
 
     fn play_smithy<const P: usize>(&mut self) -> bool;
     fn play_village<const P: usize>(&mut self) -> bool;
+
     fn play_patrol<const P: usize>(&mut self) -> bool;
     fn play_harem<const P: usize>(&mut self) -> bool;
+
+    fn play_faithful_hound<const P: usize>(&mut self) -> bool;
 
     // supply inspection
     fn province_in_supply(&self) -> u8;
@@ -133,6 +138,8 @@ pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng +
     village: pile::village::Pile,
     patrol: pile::patrol::Pile,
     harem: pile::harem::Pile,
+
+    faithful_hound: pile::faithful_hound::Pile,
 
     players: [PersonalState; N],
     trash: Vec<CardType>,
@@ -256,6 +263,7 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
             village: pile::village::Pile::make::<N>(),
             patrol: pile::patrol::Pile::make::<N>(),
             harem: pile::harem::Pile::make::<N>(),
+            faithful_hound: pile::faithful_hound::Pile::make::<N>(),
             players: [(); N].map(|_| PersonalState::make(k.use_shelter())),
             trash: vec![],
             observer: o,
@@ -333,6 +341,7 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Siz
     make_simple_buy_fn!(village, buy_village);
     make_simple_buy_fn!(harem, buy_harem);
     make_simple_buy_fn!(patrol, buy_patrol);
+    make_simple_buy_fn!(faithful_hound, buy_faithful_hound);
 
     make_simple_play_fn!(Gold, gold, play_gold);
     make_simple_play_fn!(Silver, silver, play_silver);
@@ -347,6 +356,7 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Siz
 
     make_simple_play_fn!(Harem, harem, play_harem);
     make_simple_play_fn!(Patrol, patrol, play_patrol);
+    make_simple_play_fn!(FaithfulHound, faithful_hound, play_faithful_hound);
 
     #[inline]
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
