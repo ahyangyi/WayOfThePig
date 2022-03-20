@@ -88,3 +88,6 @@ make_simple_action_pile!(patrol, Patrol);
 
 // Hinterlands
 make_simple_action_pile!(oasis, Oasis);
+
+// Nocturne
+make_simple_action_pile!(faithful_hound, FaithfulHound);

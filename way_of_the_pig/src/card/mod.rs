@@ -35,6 +35,9 @@ pub mod upgrade;
 // Hinterlands
 pub mod oasis;
 
+// Nocturne
+pub mod faithful_hound;
+
 bitflags! {
     pub struct Type: u32 {
         const NONE = 0;
@@ -152,6 +155,8 @@ macro_rules! make_dynamic_dispatch_fn {
                 CardType::Upgrade => upgrade::Card::$m(),
 
                 CardType::Oasis => oasis::Card::$m(),
+
+                CardType::FaithfulHound => faithful_hound::Card::$m(),
 
                 _ => $d,
             }
