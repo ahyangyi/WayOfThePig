@@ -15,4 +15,7 @@ pub trait Controller {
     fn trash_for_upgrade<G: game::GameState, const P: usize>(&mut self, _game: &mut G) -> Option<CardType> {
         None
     }
+    fn discard_1<G: game::GameState, const P: usize>(&mut self, _game: &mut G) -> Option<CardType> {
+        None
+    }
 }
