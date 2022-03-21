@@ -33,7 +33,7 @@ where
         if game.end() {
             return 0;
         }
-        game.get_player::<0>().clean_up();
+        game.clean_up::<0>();
         game.get_observer().notify_turn::<1>(round);
         game.get_player::<1>().turn_start();
         self.1.act::<G, 1>(game);
@@ -41,7 +41,7 @@ where
         if game.end() {
             return 1;
         }
-        game.get_player::<1>().clean_up();
+        game.clean_up::<1>();
         -1
     }
 }

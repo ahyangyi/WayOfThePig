@@ -59,6 +59,12 @@ macro_rules! make_simple_pile {
     };
 }
 
+macro_rules! make_simple_action_pile {
+    ( $pile:ident, $card:ident) => {
+        make_simple_pile!($pile, $card, [10, 10, 10, 10, 10]);
+    };
+}
+
 make_simple_pile!(province, Province, [8, 8, 12, 15, 18]);
 make_simple_pile!(duchy, Duchy, [8, 8, 12, 12, 12]);
 make_simple_pile!(estate, Estate, [8, 8, 12, 12, 12]);
@@ -70,9 +76,18 @@ make_simple_pile!(curse, Curse, [10, 20, 30, 40, 50]);
 make_simple_pile!(colony, Colony, [8, 8, 12, 12, 12]);
 make_simple_pile!(platinum, Platinum, [12, 12, 12, 12, 12]);
 
-make_simple_pile!(market, Market, [10, 10, 10, 10, 10]);
-make_simple_pile!(militia, Militia, [10, 10, 10, 10, 10]);
-make_simple_pile!(smithy, Smithy, [10, 10, 10, 10, 10]);
-make_simple_pile!(village, Village, [10, 10, 10, 10, 10]);
+// Base
+make_simple_action_pile!(market, Market);
+make_simple_action_pile!(militia, Militia);
+make_simple_action_pile!(smithy, Smithy);
+make_simple_action_pile!(village, Village);
+
+// Intrigue
 make_simple_pile!(harem, Harem, [8, 8, 12, 12, 12]);
-make_simple_pile!(patrol, Patrol, [10, 10, 10, 10, 10]);
+make_simple_action_pile!(patrol, Patrol);
+
+// Hinterlands
+make_simple_action_pile!(oasis, Oasis);
+
+// Nocturne
+make_simple_action_pile!(faithful_hound, FaithfulHound);

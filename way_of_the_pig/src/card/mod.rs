@@ -15,7 +15,13 @@ pub mod silver;
 pub mod colony;
 pub mod platinum;
 
+// Shelter
+pub mod hovel;
+pub mod necropolis;
+pub mod overgrown_estate;
+
 // Base Set
+pub mod festival;
 pub mod market;
 pub mod militia;
 pub mod smithy;
@@ -28,6 +34,9 @@ pub mod upgrade;
 
 // Hinterlands
 pub mod oasis;
+
+// Nocturne
+pub mod faithful_hound;
 
 bitflags! {
     pub struct Type: u32 {
@@ -70,7 +79,7 @@ bitflags! {
 pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
-    fn play<G: game::GameState, const P: usize>(_g: &mut G) {}
+    fn on_play<G: game::GameState, const P: usize>(_g: &mut G) {}
     #[inline]
     fn vp() -> u32 {
         0
@@ -132,6 +141,10 @@ macro_rules! make_dynamic_dispatch_fn {
                 CardType::Colony => colony::Card::$m(),
                 CardType::Platinum => platinum::Card::$m(),
 
+                CardType::Hovel => hovel::Card::$m(),
+                CardType::Necropolis => necropolis::Card::$m(),
+                CardType::OvergrownEstate => overgrown_estate::Card::$m(),
+
                 CardType::Market => market::Card::$m(),
                 CardType::Militia => militia::Card::$m(),
                 CardType::Smithy => smithy::Card::$m(),
@@ -142,6 +155,8 @@ macro_rules! make_dynamic_dispatch_fn {
                 CardType::Upgrade => upgrade::Card::$m(),
 
                 CardType::Oasis => oasis::Card::$m(),
+
+                CardType::FaithfulHound => faithful_hound::Card::$m(),
 
                 _ => $d,
             }

@@ -16,7 +16,8 @@ impl card::Card for Card {
 
     #[inline]
     fn on_play<G: game::GameState, const P: usize>(g: &mut G) {
-        g.draw::<P>();
-        g.get_player::<P>().action += 1;
+        g.get_player::<P>().action += 2;
+        g.get_player::<P>().buy += 1;
+        g.get_player::<P>().coin += 2;
     }
 }

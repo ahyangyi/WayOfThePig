@@ -27,6 +27,8 @@ impl Controller {
 
 impl controller::Controller for Controller {
     fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
+        game.play_necropolis::<P>();
+        game.play_patrol::<P>();
         game.play_patrol::<P>();
     }
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
@@ -68,7 +70,14 @@ impl controller::Controller for Controller {
                 return;
             } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Patrol) * 8 < num_money::<G, P>(game) && game.buy_patrol::<P>()
+            } else if game.get_player::<P>().count_card(card::CardType::Patrol) * 8
+                < num_money::<G, P>(game)
+                    + if game.get_player::<P>().count_card(card::CardType::Necropolis) == 1 {
+                        8
+                    } else {
+                        0
+                    }
+                && game.buy_patrol::<P>()
             {
                 return;
             } else {

@@ -1,21 +1,15 @@
 use crate::card;
-use crate::game;
 
 pub struct Card {}
 
 impl card::Card for Card {
     #[inline]
     fn static_price() -> u32 {
-        9
+        1
     }
 
     #[inline]
     fn static_type() -> card::Type {
-        card::Type::TREASURE
-    }
-
-    #[inline]
-    fn on_play<G: game::GameState, const P: usize>(g: &mut G) {
-        g.add_coin::<P>(5);
+        card::Type::VICTORY | card::Type::SHELTER
     }
 }

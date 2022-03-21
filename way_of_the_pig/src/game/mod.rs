@@ -4,12 +4,10 @@ use crate::controller;
 use crate::game::run_round::RoundPlayer;
 use crate::kingdom;
 use crate::observer;
-use crate::observer::Observer;
 use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
 use std::mem;
 
 mod run_round;
@@ -47,7 +45,7 @@ macro_rules! make_simple_play_fn {
             }
             self.players[P].hand[CardType::$card as usize] -= 1;
             self.players[P].play.push(CardType::$card);
-            card::$c::Card::play::<Self, P>(self);
+            card::$c::Card::on_play::<Self, P>(self);
             true
         }
     };
@@ -87,6 +85,8 @@ pub trait GameState {
     fn buy_patrol<const P: usize>(&mut self) -> bool;
     fn buy_harem<const P: usize>(&mut self) -> bool;
 
+    fn buy_faithful_hound<const P: usize>(&mut self) -> bool;
+
     // play APIs
     fn play_gold<const P: usize>(&mut self) -> bool;
     fn play_silver<const P: usize>(&mut self) -> bool;
@@ -94,10 +94,15 @@ pub trait GameState {
 
     fn play_platinum<const P: usize>(&mut self) -> bool;
 
+    fn play_necropolis<const P: usize>(&mut self) -> bool;
+
     fn play_smithy<const P: usize>(&mut self) -> bool;
     fn play_village<const P: usize>(&mut self) -> bool;
+
     fn play_patrol<const P: usize>(&mut self) -> bool;
     fn play_harem<const P: usize>(&mut self) -> bool;
+
+    fn play_faithful_hound<const P: usize>(&mut self) -> bool;
 
     // supply inspection
     fn province_in_supply(&self) -> u8;
@@ -114,9 +119,10 @@ pub trait GameState {
 
     // internal stuff
     fn end(&self) -> bool;
+    fn clean_up<const P: usize>(&mut self);
 }
 
-pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> {
+pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> {
     province: pile::province::Pile,
     duchy: pile::duchy::Pile,
     estate: pile::estate::Pile,
@@ -133,10 +139,13 @@ pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> 
     patrol: pile::patrol::Pile,
     harem: pile::harem::Pile,
 
+    faithful_hound: pile::faithful_hound::Pile,
+
     players: [PersonalState; N],
     trash: Vec<CardType>,
 
     observer: &'a mut O,
+    rng: &'a mut RNG,
 }
 
 pub struct PersonalState {
@@ -148,16 +157,17 @@ pub struct PersonalState {
     pub action: u32,
     pub buy: u32,
     pub coin: u32,
+    pub vp: u32,
+    pub coffer: u32,
+    pub villager: u32,
+    pub favor: u32,
 }
 
 impl PersonalState {
-    pub fn make() -> PersonalState {
+    pub fn make(use_shelter: bool) -> PersonalState {
         let mut ret = PersonalState {
             deck: vec![],
             discard: vec![
-                CardType::Estate,
-                CardType::Estate,
-                CardType::Estate,
                 CardType::Copper,
                 CardType::Copper,
                 CardType::Copper,
@@ -172,29 +182,26 @@ impl PersonalState {
             action: 0,
             buy: 0,
             coin: 0,
+            vp: 0,
+            coffer: 0,
+            villager: 0,
+            favor: 0,
         };
         ret.deck_stats[CardType::Copper as usize] = 7;
-        ret.deck_stats[CardType::Estate as usize] = 3;
+        if use_shelter {
+            ret.discard.push(CardType::Hovel);
+            ret.discard.push(CardType::Necropolis);
+            ret.discard.push(CardType::OvergrownEstate);
+            ret.deck_stats[CardType::Hovel as usize] += 1;
+            ret.deck_stats[CardType::Necropolis as usize] += 1;
+            ret.deck_stats[CardType::OvergrownEstate as usize] += 1;
+        } else {
+            ret.discard.push(CardType::Estate);
+            ret.discard.push(CardType::Estate);
+            ret.discard.push(CardType::Estate);
+            ret.deck_stats[CardType::Estate as usize] = 3;
+        }
         ret
-    }
-
-    #[inline]
-    pub fn draw_to(&mut self) -> Option<CardType> {
-        if self.deck.len() == 0 {
-            self.discard.shuffle(&mut thread_rng());
-            mem::swap(&mut self.deck, &mut self.discard);
-        }
-        self.deck.pop()
-    }
-
-    pub fn draw(&mut self) {
-        let card = self.draw_to();
-        match card {
-            None => {}
-            Some(x) => {
-                self.hand[x as usize] += 1;
-            }
-        }
     }
 
     #[inline]
@@ -208,19 +215,6 @@ impl PersonalState {
         self.coin = 0;
     }
 
-    pub fn clean_up(&mut self) {
-        for i in 0..CARDTYPES {
-            for _j in 0..self.hand[i] {
-                self.discard.push(FromPrimitive::from_usize(i).unwrap());
-            }
-            self.hand[i] = 0;
-        }
-        self.discard.append(&mut self.play);
-        for _card in 0..5 {
-            self.draw();
-        }
-    }
-
     // only guarantees meaningful results at game end
     pub fn total_final_vp(&self) -> u32 {
         self.count_card_static::<{ CardType::Colony as usize }>() * 10
@@ -228,6 +222,7 @@ impl PersonalState {
             + self.count_card_static::<{ CardType::Duchy as usize }>() * 3
             + self.count_card_static::<{ CardType::Estate as usize }>() * 1
             + self.count_card_static::<{ CardType::Harem as usize }>() * 2
+            + self.vp
     }
 
     pub fn get_action(&self) -> u32 {
@@ -251,9 +246,10 @@ impl PersonalState {
     }
 }
 
-impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K, O, N> {
-    pub fn make(o: &'a mut O) -> Game<'a, K, O, N> {
-        let ret: Game<'a, K, O, N> = Game {
+impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> Game<'a, K, O, RNG, N> {
+    pub fn make(o: &'a mut O, rng: &'a mut RNG) -> Game<'a, K, O, RNG, N> {
+        let k = K::default();
+        let ret: Game<'a, K, O, RNG, N> = Game {
             province: pile::province::Pile::make::<N>(),
             duchy: pile::duchy::Pile::make::<N>(),
             estate: pile::estate::Pile::make::<N>(),
@@ -267,9 +263,11 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
             village: pile::village::Pile::make::<N>(),
             patrol: pile::patrol::Pile::make::<N>(),
             harem: pile::harem::Pile::make::<N>(),
-            players: [(); N].map(|_| PersonalState::make()),
+            faithful_hound: pile::faithful_hound::Pile::make::<N>(),
+            players: [(); N].map(|_| PersonalState::make(k.use_shelter())),
             trash: vec![],
             observer: o,
+            rng: rng,
         };
         ret
     }
@@ -297,10 +295,9 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
         T1: controller::Controller,
         T2: controller::Controller,
     {
-        for player in 0..2 {
-            for _card in 0..5 {
-                self.players[player].draw();
-            }
+        for _card in 0..5 {
+            self.draw::<0>();
+            self.draw::<1>();
         }
         let mut break_pos: u32 = 0;
         for round in 0..100 {
@@ -325,9 +322,10 @@ impl<'a, K: kingdom::Kingdom, O: observer::Observer, const N: usize> Game<'a, K,
     }
 }
 
-impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for Game<'_, K, O, N> {
+impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> GameState
+    for Game<'_, K, O, RNG, N>
+{
     type Observer = O;
-
     make_simple_buy_fn!(province, buy_province);
     make_simple_buy_fn!(duchy, buy_duchy);
     make_simple_buy_fn!(estate, buy_estate);
@@ -343,6 +341,7 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
     make_simple_buy_fn!(village, buy_village);
     make_simple_buy_fn!(harem, buy_harem);
     make_simple_buy_fn!(patrol, buy_patrol);
+    make_simple_buy_fn!(faithful_hound, buy_faithful_hound);
 
     make_simple_play_fn!(Gold, gold, play_gold);
     make_simple_play_fn!(Silver, silver, play_silver);
@@ -350,11 +349,14 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
 
     make_simple_play_fn!(Platinum, platinum, play_platinum);
 
+    make_simple_play_fn!(Necropolis, necropolis, play_necropolis);
+
     make_simple_play_fn!(Smithy, smithy, play_smithy);
     make_simple_play_fn!(Village, village, play_village);
 
     make_simple_play_fn!(Harem, harem, play_harem);
     make_simple_play_fn!(Patrol, patrol, play_patrol);
+    make_simple_play_fn!(FaithfulHound, faithful_hound, play_faithful_hound);
 
     #[inline]
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
@@ -389,15 +391,38 @@ impl<K: kingdom::Kingdom, O: observer::Observer, const N: usize> GameState for G
 
     #[inline]
     fn draw_to<const P: usize>(&mut self) -> Option<CardType> {
-        self.players[P].draw_to()
+        if self.players[P].deck.len() == 0 {
+            self.players[P].discard.shuffle(&mut self.rng);
+            mem::swap(&mut self.players[P].deck, &mut self.players[P].discard);
+        }
+        self.players[P].deck.pop()
     }
 
     #[inline]
     fn draw<const P: usize>(&mut self) {
-        self.players[P].draw()
+        let card = self.draw_to::<P>();
+        match card {
+            None => {}
+            Some(x) => {
+                self.players[P].hand[x as usize] += 1;
+            }
+        }
     }
 
     fn end(&self) -> bool {
         self.province_end() || self.colony_end() || self.pile_end()
+    }
+
+    fn clean_up<const P: usize>(&mut self) {
+        for i in 0..CARDTYPES {
+            for _j in 0..self.players[P].hand[i] {
+                self.players[P].discard.push(FromPrimitive::from_usize(i).unwrap());
+            }
+            self.players[P].hand[i] = 0;
+        }
+        self.players[P].discard.append(&mut self.players[P].play);
+        for _card in 0..5 {
+            self.draw::<P>();
+        }
     }
 }

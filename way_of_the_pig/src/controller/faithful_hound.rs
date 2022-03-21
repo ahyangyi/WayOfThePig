@@ -1,12 +1,4 @@
-// An implementation of DominionSim strategy "Smithy" by HiveMindEmulator, which attempts to buy the first
-// possible entry:
-//   Buy province if total money > 15
-//   Buy duchy if remaining province <= 4
-//   Buy estate if remaining province <= 2
-//   Buy gold
-//   Buy Duchy if remaining province <= 6
-//   Buy Smithy if #smithy < #treasure / 11
-//   Buy silver
+// Unoptimized strategy
 use crate::card;
 use crate::controller;
 use crate::game;
@@ -36,8 +28,8 @@ impl Controller {
 impl controller::Controller for Controller {
     fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
         game.play_necropolis::<P>();
-        game.play_smithy::<P>();
-        game.play_smithy::<P>();
+        game.play_faithful_hound::<P>();
+        game.play_faithful_hound::<P>();
     }
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
         while game.play_platinum::<P>() {}
@@ -62,7 +54,7 @@ impl controller::Controller for Controller {
             } else if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
             } else if game.get_player::<P>().count_card(card::CardType::Patrol) * 11 < num_money::<G, P>(game)
-                && game.buy_smithy::<P>()
+                && game.buy_faithful_hound::<P>()
             {
                 return;
             } else {
@@ -79,18 +71,17 @@ impl controller::Controller for Controller {
                 return;
             } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Smithy) * 11
+            } else if game.buy_silver::<P>() {
+                return;
+            } else if game.get_player::<P>().count_card(card::CardType::FaithfulHound) * 11
                 < num_money::<G, P>(game)
                     + if game.get_player::<P>().count_card(card::CardType::Necropolis) == 1 {
                         11
                     } else {
                         0
                     }
-                && game.buy_smithy::<P>()
             {
-                return;
-            } else {
-                game.buy_silver::<P>();
+                game.buy_faithful_hound::<P>();
             }
         }
     }
