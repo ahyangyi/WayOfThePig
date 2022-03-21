@@ -18,7 +18,7 @@ where
     where
         G: GameState,
     {
-        game.get_observer().notify_turn::<0>(round);
+        game.get_observer().turn::<0>(round);
         game.get_player::<0>().turn_start();
         self.0.act::<G, 0>(game);
         self.0.buy::<G, 0>(game);
@@ -26,7 +26,7 @@ where
             return 0;
         }
         game.clean_up::<0>();
-        game.get_observer().notify_turn::<1>(round);
+        game.get_observer().turn::<1>(round);
         game.get_player::<1>().turn_start();
         self.1.act::<G, 1>(game);
         self.1.buy::<G, 1>(game);

@@ -12,7 +12,10 @@ pub struct RoundStats {
 }
 
 impl observer::Observer for RoundStats {
-    fn notify_turn<const P: usize>(&mut self, round: u32) {
+    fn start(&mut self) {
+        self.prev_vp = 0;
+    }
+    fn turn<const P: usize>(&mut self, round: u32) {
         self.current_round = round;
         if round < MAX_ROUND as u32 {
             self.round[P][round as usize] += 1;

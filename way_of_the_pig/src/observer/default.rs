@@ -9,7 +9,7 @@ pub struct WinDrawLoss {
 
 impl observer::Observer for WinDrawLoss {
     #[inline]
-    fn notify_result_2(&mut self, result: [u8; 2]) {
+    fn result_2(&mut self, result: [u8; 2]) {
         if result[0] == 0 && result[1] == 1 {
             self.win += 1;
         } else if result[0] == 0 && result[1] == 0 {

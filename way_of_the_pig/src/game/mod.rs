@@ -318,7 +318,7 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
         } else {
             [0, 0]
         };
-        self.observer.notify_result_2(ret);
+        self.observer.result_2(ret);
     }
 }
 
