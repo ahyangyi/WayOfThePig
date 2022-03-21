@@ -8,6 +8,7 @@ pub struct RoundStats {
     vp: [[u32; MAX_ROUND]; 2],
     round: [[u32; MAX_ROUND]; 2],
     current_round: u32,
+    prev_vp: u32,
 }
 
 impl observer::Observer for RoundStats {
@@ -31,6 +32,7 @@ impl Default for RoundStats {
             vp: [[0; MAX_ROUND]; 2],
             round: [[0; MAX_ROUND]; 2],
             current_round: 0,
+            prev_vp: 0,
         }
     }
 }
