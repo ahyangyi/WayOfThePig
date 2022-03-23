@@ -11,6 +11,7 @@ use rand::seq::SliceRandom;
 use std::mem;
 
 mod run_round;
+mod table;
 
 macro_rules! make_simple_buy_fn {
     ( $pile:ident, $f:ident ) => {
