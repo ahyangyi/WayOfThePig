@@ -68,6 +68,7 @@ const CARDTYPES: usize = 23;
 
 pub trait GameState {
     type Observer: observer::Observer;
+    type Table: table::Table;
 
     // buy APIs
     fn buy_province<const P: usize>(&mut self) -> bool;
@@ -123,7 +124,7 @@ pub trait GameState {
     fn clean_up<const P: usize>(&mut self);
 }
 
-pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> {
+pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize> {
     province: pile::province::Pile,
     duchy: pile::duchy::Pile,
     estate: pile::estate::Pile,
@@ -247,10 +248,12 @@ impl PersonalState {
     }
 }
 
-impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> Game<'a, K, O, RNG, N> {
-    pub fn make(o: &'a mut O, rng: &'a mut RNG) -> Game<'a, K, O, RNG, N> {
+impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize>
+    Game<'a, K, O, RNG, T, N>
+{
+    pub fn make(o: &'a mut O, rng: &'a mut RNG) -> Game<'a, K, O, RNG, T, N> {
         let k = K::default();
-        let ret: Game<'a, K, O, RNG, N> = Game {
+        let ret: Game<'a, K, O, RNG, T, N> = Game {
             province: pile::province::Pile::make::<N>(),
             duchy: pile::duchy::Pile::make::<N>(),
             estate: pile::estate::Pile::make::<N>(),
@@ -323,10 +326,11 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
     }
 }
 
-impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, const N: usize> GameState
-    for Game<'_, K, O, RNG, N>
+impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize> GameState
+    for Game<'_, K, O, RNG, T, N>
 {
     type Observer = O;
+    type Table = T;
     make_simple_buy_fn!(province, buy_province);
     make_simple_buy_fn!(duchy, buy_duchy);
     make_simple_buy_fn!(estate, buy_estate);
