@@ -148,6 +148,7 @@ pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng +
 
     observer: &'a mut O,
     rng: &'a mut RNG,
+    table: &'a mut T,
 }
 
 pub struct PersonalState {
@@ -251,7 +252,7 @@ impl PersonalState {
 impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize>
     Game<'a, K, O, RNG, T, N>
 {
-    pub fn make(o: &'a mut O, rng: &'a mut RNG) -> Game<'a, K, O, RNG, T, N> {
+    pub fn make(o: &'a mut O, rng: &'a mut RNG, t: &'a mut T) -> Game<'a, K, O, RNG, T, N> {
         let k = K::default();
         let ret: Game<'a, K, O, RNG, T, N> = Game {
             province: pile::province::Pile::make::<N>(),
@@ -272,6 +273,7 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
             trash: vec![],
             observer: o,
             rng: rng,
+            table: t,
         };
         ret
     }
