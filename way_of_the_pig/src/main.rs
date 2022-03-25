@@ -9,27 +9,30 @@ use way_of_the_pig::observer;
 
 #[macro_export]
 macro_rules! round_robin {
-    ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident ) => {
+    ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $tx:ident, $x:ident; $ty:ident, $y:ident ) => {
         let mut rng = rand::thread_rng();
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, 2> = game::Game::make(&mut $w[$i][$j], &mut rng);
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, ($tx::Controller, $ty::Controller), 2> =
+                game::Game::make(&mut $w[$i][$j], &mut rng, (&mut $x, &mut $y));
             a.run(&mut $x, &mut $y);
         }
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, 2> = game::Game::make(&mut $w[$j][$i], &mut rng);
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, ($ty::Controller, $tx::Controller), 2> =
+                game::Game::make(&mut $w[$j][$i], &mut rng, (&mut $y, &mut $x));
             a.run(&mut $y, &mut $x);
         }
     };
-    ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $x:ident; $y:ident, $($tail:ident),* ) => {
-        round_robin!(@match $f; $w; $n; $i; $j; $x; $y);
-        round_robin!(@match $f; $w; $n; $i; $j+1usize; $x; $($tail),*);
+    ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $tx:ident, $x:ident; $ty:ident, $y:ident, $($tail:ident),* ) => {
+        round_robin!(@match $f; $w; $n; $i; $j; $tx, $x; $ty, $y);
+        round_robin!(@match $f; $w; $n; $i; $j+1usize; $tx, $x; $($tail),*);
     };
-    ( @match_array $f:ident; $w:ident; $n:expr; $i:expr; $x:ident ) => {
+    ( @match_array $f:ident; $w:ident; $n:expr; $i:expr; $tx:ident, $x:ident ) => {
     };
-    ( @match_array $f:ident; $w:ident; $n:expr; $i:expr; $x:ident, $($tail:ident),* ) => {
-        round_robin!(@match $f; $w; $n; $i; $i+1usize; $x; $($tail),*);
+    ( @match_array $f:ident; $w:ident; $n:expr; $i:expr; $tx:ident, $x:ident, $($tail:ident),* ) => {
+        round_robin!(@match $f; $w; $n; $i; $i+1usize; $tx, $x; $($tail),*);
         round_robin!(@match_array $f; $w; $n; $i+1usize; $($tail),*);
     };
+    // Entrance
     ( $f:ident; $w:ident; $n:expr; $($tail:ident),* ) => {
         round_robin!(@match_array $f; $w; $n; 0usize; $($tail),*);
     };
@@ -43,7 +46,13 @@ fn main() {
     let mut p4: patrol_harem::Controller = patrol_harem::Controller::make();
     let mut p5: faithful_hound::Controller = faithful_hound::Controller::make();
     let n = 100000;
-    round_robin!(a; w; n; p1, p2, p3, p4, p5);
+    round_robin!(a; w; n;
+    big_money, p1,
+    smithy, p2,
+    patrol, p3,
+    patrol_harem, p4,
+    faithful_hound, p5
+    );
 
     let names = ["bm", "smithy", "patrol", "patrol+harem", "faithful hound"];
     for i in 0..5 {
