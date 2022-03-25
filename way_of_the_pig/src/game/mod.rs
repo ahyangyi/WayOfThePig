@@ -68,7 +68,7 @@ const CARDTYPES: usize = 23;
 
 pub trait GameState {
     type Observer: observer::Observer;
-    type Table: table::Table;
+    type Table: RoundPlayer + table::Table;
 
     // buy APIs
     fn buy_province<const P: usize>(&mut self) -> bool;
@@ -124,7 +124,8 @@ pub trait GameState {
     fn clean_up<const P: usize>(&mut self);
 }
 
-pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize> {
+pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng + ?Sized, T: RoundPlayer + table::Table, const N: usize>
+{
     province: pile::province::Pile,
     duchy: pile::duchy::Pile,
     estate: pile::estate::Pile,
@@ -148,7 +149,7 @@ pub struct Game<'a, K: kingdom::Kingdom, O: observer::Observer, RNG: rand::Rng +
 
     observer: &'a mut O,
     rng: &'a mut RNG,
-    table: &'a mut T,
+    table: T,
 }
 
 pub struct PersonalState {
@@ -249,10 +250,16 @@ impl PersonalState {
     }
 }
 
-impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize>
-    Game<'a, K, O, RNG, T, N>
+impl<
+        'a,
+        K: kingdom::Kingdom + Default,
+        O: observer::Observer,
+        RNG: rand::Rng + ?Sized,
+        T: RoundPlayer + table::Table,
+        const N: usize,
+    > Game<'a, K, O, RNG, T, N>
 {
-    pub fn make(o: &'a mut O, rng: &'a mut RNG, t: &'a mut T) -> Game<'a, K, O, RNG, T, N> {
+    pub fn make(o: &'a mut O, rng: &'a mut RNG, t: T) -> Game<'a, K, O, RNG, T, N> {
         let k = K::default();
         let ret: Game<'a, K, O, RNG, T, N> = Game {
             province: pile::province::Pile::make::<N>(),
@@ -296,18 +303,14 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
         empty_pile >= end_condition
     }
 
-    pub fn run<T1, T2>(&mut self, t1: &mut T1, t2: &mut T2)
-    where
-        T1: controller::Controller,
-        T2: controller::Controller,
-    {
+    pub fn run(&mut self) {
         for _card in 0..5 {
             self.draw::<0>();
             self.draw::<1>();
         }
         let mut break_pos: u32 = 0;
         for round in 0..100 {
-            let ret = (&mut *t1, &mut *t2).run_round::<Self>(self, round);
+            let ret = self.table.run_round::<Self>(self, round);
             if ret >= 0 {
                 break_pos = ret as u32;
                 break;
@@ -328,8 +331,8 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
     }
 }
 
-impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, T: table::Table, const N: usize> GameState
-    for Game<'_, K, O, RNG, T, N>
+impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Sized, T: RoundPlayer + table::Table, const N: usize>
+    GameState for Game<'_, K, O, RNG, T, N>
 {
     type Observer = O;
     type Table = T;

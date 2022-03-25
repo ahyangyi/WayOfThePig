@@ -12,12 +12,12 @@ macro_rules! round_robin {
     ( @match $f:ident; $w:ident; $n:expr; $i:expr; $j:expr; $tx:ident, $x:ident; $ty:ident, $y:ident ) => {
         let mut rng = rand::thread_rng();
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, ($tx::Controller, $ty::Controller), 2> =
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, (&mut $tx::Controller, &mut $ty::Controller), 2> =
                 game::Game::make(&mut $w[$i][$j], &mut rng, (&mut $x, &mut $y));
             a.run(&mut $x, &mut $y);
         }
         for _i in 0..$n {
-            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, ($ty::Controller, $tx::Controller), 2> =
+            let mut a: game::Game<kingdom::SimpleKingdom, observer::default::WinDrawLoss, rand::rngs::ThreadRng, (&mut $ty::Controller, &mut $tx::Controller), 2> =
                 game::Game::make(&mut $w[$j][$i], &mut rng, (&mut $y, &mut $x));
             a.run(&mut $y, &mut $x);
         }
