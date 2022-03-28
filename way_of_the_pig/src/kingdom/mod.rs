@@ -38,3 +38,15 @@ impl Kingdom for DarkAgeKingdom {
         true
     }
 }
+
+#[derive(Default)]
+pub struct ProsperityDarkAgeKingdom {}
+
+impl Kingdom for ProsperityDarkAgeKingdom {
+    type ColonyPile = pile::colony::Pile;
+    type PlatinumPile = pile::platinum::Pile;
+
+    fn use_shelter(&self) -> bool {
+        true
+    }
+}

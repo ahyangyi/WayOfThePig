@@ -52,6 +52,24 @@ macro_rules! make_simple_play_fn {
     };
 }
 
+macro_rules! make_simple_play_action_fn {
+    ( $card:ident, $c:ident, $f:ident ) => {
+        fn $f<const P: usize>(&mut self) -> bool {
+            if self.players[P].hand[CardType::$card as usize] == 0 {
+                return false;
+            }
+            if self.players[P].action == 0 {
+                return false;
+            }
+            self.players[P].hand[CardType::$card as usize] -= 1;
+            self.players[P].action -= 1;
+            self.players[P].play.push(CardType::$card);
+            card::$c::Card::on_play::<Self, P>(self);
+            true
+        }
+    };
+}
+
 macro_rules! count_empty_pile {
     ( $self:ident, $cnt:ident; $c:ident ) => {
         if $self.$c.enabled() && $self.$c.remaining_cards() == 0 {
@@ -359,14 +377,14 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Siz
 
     make_simple_play_fn!(Platinum, platinum, play_platinum);
 
-    make_simple_play_fn!(Necropolis, necropolis, play_necropolis);
+    make_simple_play_action_fn!(Necropolis, necropolis, play_necropolis);
 
-    make_simple_play_fn!(Smithy, smithy, play_smithy);
-    make_simple_play_fn!(Village, village, play_village);
+    make_simple_play_action_fn!(Smithy, smithy, play_smithy);
+    make_simple_play_action_fn!(Village, village, play_village);
 
     make_simple_play_fn!(Harem, harem, play_harem);
-    make_simple_play_fn!(Patrol, patrol, play_patrol);
-    make_simple_play_fn!(FaithfulHound, faithful_hound, play_faithful_hound);
+    make_simple_play_action_fn!(Patrol, patrol, play_patrol);
+    make_simple_play_action_fn!(FaithfulHound, faithful_hound, play_faithful_hound);
 
     #[inline]
     fn get_player<const P: usize>(&mut self) -> &mut PersonalState {
