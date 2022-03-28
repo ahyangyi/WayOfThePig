@@ -65,15 +65,21 @@ macro_rules! make_simple_action_pile {
     };
 }
 
+macro_rules! make_simple_victory_pile {
+    ( $pile:ident, $card:ident) => {
+        make_simple_pile!($pile, $card, [8, 8, 12, 12, 12]);
+    };
+}
+
 make_simple_pile!(province, Province, [8, 8, 12, 15, 18]);
-make_simple_pile!(duchy, Duchy, [8, 8, 12, 12, 12]);
-make_simple_pile!(estate, Estate, [8, 8, 12, 12, 12]);
-make_simple_pile!(gold, Gold, [30, 30, 30, 60, 60]);
+make_simple_victory_pile!(duchy, Duchy);
+make_simple_victory_pile!(estate, Estate);
+make_simple_victory_pile!(gold, Gold);
 make_simple_pile!(silver, Silver, [40, 40, 40, 80, 80]);
 make_simple_pile!(copper, Copper, [46, 39, 32, 85, 78]);
 make_simple_pile!(curse, Curse, [10, 20, 30, 40, 50]);
 
-make_simple_pile!(colony, Colony, [8, 8, 12, 12, 12]);
+make_simple_victory_pile!(colony, Colony);
 make_simple_pile!(platinum, Platinum, [12, 12, 12, 12, 12]);
 
 // Base
@@ -83,7 +89,7 @@ make_simple_action_pile!(smithy, Smithy);
 make_simple_action_pile!(village, Village);
 
 // Intrigue
-make_simple_pile!(harem, Harem, [8, 8, 12, 12, 12]);
+make_simple_victory_pile!(harem, Harem);
 make_simple_action_pile!(patrol, Patrol);
 
 // Hinterlands
