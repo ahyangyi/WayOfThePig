@@ -1,4 +1,5 @@
 use crate::observer;
+use statrs::function::beta::inv_beta_reg;
 
 #[derive(Copy, Clone, Default)]
 pub struct WinDrawLoss {
@@ -26,6 +27,18 @@ impl WinDrawLoss {
         let n = self.win + self.draw + self.loss;
         let p1 = (self.win * 2 + self.draw) as f64 / (2.0 * n as f64);
         let p2 = (other.loss * 2 + other.draw) as f64 / (2.0 * n as f64);
-        format!("{:.3} ({:.3}; {:.3})", (p1 + p2) / 2.0, p1, p2)
+
+        let a = (self.win * 2 + self.draw + other.loss * 2 + other.draw) as f64 / 2.0;
+        let b = (self.loss * 2 + self.draw + other.win * 2 + other.draw) as f64 / 2.0;
+        let quantile_025 = inv_beta_reg(a, b, 0.025);
+        let quantile_975 = inv_beta_reg(a, b, 0.975);
+        format!(
+            "{:.3} 95%ci ({:.3},{:.3}) (First: {:.3}; Second: {:.3})",
+            (p1 + p2) / 2.0,
+            quantile_025,
+            quantile_975,
+            p1,
+            p2
+        )
     }
 }
