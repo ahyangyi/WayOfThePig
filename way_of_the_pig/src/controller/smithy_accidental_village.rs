@@ -37,8 +37,9 @@ impl controller::Controller for Controller {
     fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
         loop {
             while game.play_village::<P>() {}
-            game.play_smithy::<P>();
-            break;
+            if !game.play_smithy::<P>() {
+                break;
+            }
         }
     }
     fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
@@ -73,9 +74,8 @@ impl controller::Controller for Controller {
             }
             if game.get_player::<P>().count_card(card::CardType::Patrol) * 11 < num_money::<G, P>(game) && game.buy_smithy::<P>() {
                 return;
-            } else {
-                game.buy_silver::<P>();
             }
+            game.buy_silver::<P>();
         } else {
             if total_money::<G, P>(game) > 15 && game.buy_province::<P>() {
                 return;
@@ -103,9 +103,8 @@ impl controller::Controller for Controller {
                 && game.buy_village::<P>()
             {
                 return;
-            } else {
-                game.buy_silver::<P>();
             }
+            game.buy_silver::<P>();
         }
     }
 }

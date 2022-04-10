@@ -16,12 +16,12 @@ impl pile::Pile for Pile {
 
     #[inline]
     fn top(&self) -> Option<card::CardType> {
-        return None;
+        None
     }
 
     #[inline]
     fn pop(&mut self) -> Option<card::CardType> {
-        return None;
+        None
     }
 
     #[inline]

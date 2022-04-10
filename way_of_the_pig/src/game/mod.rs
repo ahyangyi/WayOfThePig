@@ -238,7 +238,7 @@ impl PersonalState {
         self.count_card_static::<{ CardType::Colony as usize }>() * 10
             + self.count_card_static::<{ CardType::Province as usize }>() * 6
             + self.count_card_static::<{ CardType::Duchy as usize }>() * 3
-            + self.count_card_static::<{ CardType::Estate as usize }>() * 1
+            + self.count_card_static::<{ CardType::Estate as usize }>()
             + self.count_card_static::<{ CardType::Harem as usize }>() * 2
             + self.vp
     }
@@ -285,7 +285,7 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
             players: [(); N].map(|_| PersonalState::make(k.use_shelter())),
             trash: vec![],
             observer: o,
-            rng: rng,
+            rng,
         };
         ret
     }
@@ -329,9 +329,7 @@ impl<'a, K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + 
         let vp_1 = self.players[1].total_final_vp();
         let ret = if vp_0 > vp_1 {
             [0, 1]
-        } else if vp_0 < vp_1 {
-            [1, 0]
-        } else if break_pos == 0 {
+        } else if vp_0 < vp_1 || break_pos == 0 {
             [1, 0]
         } else {
             [0, 0]
@@ -409,7 +407,7 @@ impl<K: kingdom::Kingdom + Default, O: observer::Observer, RNG: rand::Rng + ?Siz
 
     #[inline]
     fn draw_to<const P: usize>(&mut self) -> Option<CardType> {
-        if self.players[P].deck.len() == 0 {
+        if self.players[P].deck.is_empty() {
             self.players[P].discard.shuffle(&mut self.rng);
             mem::swap(&mut self.players[P].deck, &mut self.players[P].discard);
         }
