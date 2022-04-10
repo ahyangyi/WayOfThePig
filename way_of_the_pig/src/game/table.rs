@@ -1,5 +1,5 @@
 use crate::controller::Controller;
-use crate::game::GameState;
+use crate::game_state::GameState;
 use crate::observer::Observer;
 
 pub trait Table {
