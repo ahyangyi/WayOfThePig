@@ -39,23 +39,32 @@ impl controller::Controller for Controller {
         if game.colony_enabled() {
             if total_money::<G, P>(game) > 15 && game.buy_colony::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 6 && game.buy_province::<P>() {
+            }
+            if game.colony_in_supply() <= 6 && game.buy_province::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 5 && game.buy_duchy::<P>() {
+            }
+            if game.colony_in_supply() <= 5 && game.buy_duchy::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 2 && game.buy_estate::<P>() {
+            }
+            if game.colony_in_supply() <= 2 && game.buy_estate::<P>() {
                 return;
-            } else if game.buy_platinum::<P>() {
+            }
+            if game.buy_platinum::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 7 && game.buy_province::<P>() {
+            }
+            if game.colony_in_supply() <= 7 && game.buy_province::<P>() {
                 return;
-            } else if game.buy_gold::<P>() {
+            }
+            if game.buy_gold::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
+            }
+            if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.buy_silver::<P>() {
+            }
+            if game.buy_silver::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::FaithfulHound) * 11
+            }
+            if game.get_player::<P>().count_card(card::CardType::FaithfulHound) * 11
                 < num_money::<G, P>(game)
                     + if game.get_player::<P>().count_card(card::CardType::Necropolis) == 1 {
                         11
@@ -68,17 +77,23 @@ impl controller::Controller for Controller {
         } else {
             if total_money::<G, P>(game) > 15 && game.buy_province::<P>() {
                 return;
-            } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
+            }
+            if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
                 return;
-            } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
+            }
+            if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
                 return;
-            } else if game.buy_gold::<P>() {
+            }
+            if game.buy_gold::<P>() {
                 return;
-            } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
+            }
+            if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.buy_silver::<P>() {
+            }
+            if game.buy_silver::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::FaithfulHound) * 11
+            }
+            if game.get_player::<P>().count_card(card::CardType::FaithfulHound) * 11
                 < num_money::<G, P>(game)
                     + if game.get_player::<P>().count_card(card::CardType::Necropolis) == 1 {
                         11

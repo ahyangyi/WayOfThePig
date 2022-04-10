@@ -17,7 +17,7 @@ fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(card::CardType::Platinum) * 5
         + game.get_player::<P>().count_card(card::CardType::Gold) * 3
         + game.get_player::<P>().count_card(card::CardType::Silver) * 2
-        + game.get_player::<P>().count_card(card::CardType::Copper) * 1
+        + game.get_player::<P>().count_card(card::CardType::Copper)
 }
 
 fn num_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
@@ -49,23 +49,29 @@ impl controller::Controller for Controller {
         if game.colony_enabled() {
             if total_money::<G, P>(game) > 15 && game.buy_colony::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 6 && game.buy_province::<P>() {
+            }
+            if game.colony_in_supply() <= 6 && game.buy_province::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 5 && game.buy_duchy::<P>() {
+            }
+            if game.colony_in_supply() <= 5 && game.buy_duchy::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 2 && game.buy_estate::<P>() {
+            }
+            if game.colony_in_supply() <= 2 && game.buy_estate::<P>() {
                 return;
-            } else if game.buy_platinum::<P>() {
+            }
+            if game.buy_platinum::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 7 && game.buy_province::<P>() {
+            }
+            if game.colony_in_supply() <= 7 && game.buy_province::<P>() {
                 return;
-            } else if game.buy_gold::<P>() {
+            }
+            if game.buy_gold::<P>() {
                 return;
-            } else if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
+            }
+            if game.colony_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Patrol) * 11 < num_money::<G, P>(game)
-                && game.buy_smithy::<P>()
-            {
+            }
+            if game.get_player::<P>().count_card(card::CardType::Patrol) * 11 < num_money::<G, P>(game) && game.buy_smithy::<P>() {
                 return;
             } else {
                 game.buy_silver::<P>();
@@ -73,20 +79,26 @@ impl controller::Controller for Controller {
         } else {
             if total_money::<G, P>(game) > 15 && game.buy_province::<P>() {
                 return;
-            } else if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
+            }
+            if game.province_in_supply() <= 4 && game.buy_duchy::<P>() {
                 return;
-            } else if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
+            }
+            if game.province_in_supply() <= 2 && game.buy_estate::<P>() {
                 return;
-            } else if game.buy_gold::<P>() {
+            }
+            if game.buy_gold::<P>() {
                 return;
-            } else if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
+            }
+            if game.province_in_supply() <= 6 && game.buy_duchy::<P>() {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Smithy) * 11
+            }
+            if game.get_player::<P>().count_card(card::CardType::Smithy) * 11
                 < num_money::<G, P>(game) + game.get_player::<P>().count_card(card::CardType::Village) * 5
                 && game.buy_smithy::<P>()
             {
                 return;
-            } else if game.get_player::<P>().count_card(card::CardType::Smithy)
+            }
+            if game.get_player::<P>().count_card(card::CardType::Smithy)
                 >= 3 + game.get_player::<P>().count_card(card::CardType::Village)
                 && game.buy_village::<P>()
             {
