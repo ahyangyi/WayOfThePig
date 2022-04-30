@@ -1,7 +1,7 @@
 use crate::card;
 use crate::card::{Card, CardType};
 use crate::controller;
-use crate::game::run_round::RoundPlayer;
+use crate::game::table::Table;
 use crate::kingdom;
 use crate::observer;
 use crate::pile;
@@ -10,7 +10,6 @@ use num_traits::FromPrimitive;
 use rand::seq::SliceRandom;
 use std::mem;
 
-mod run_round;
 mod table;
 
 macro_rules! make_simple_buy_fn {
