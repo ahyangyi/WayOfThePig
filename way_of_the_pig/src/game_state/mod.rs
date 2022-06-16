@@ -2,7 +2,6 @@ use crate::card;
 use crate::card::{Card, CardType};
 use crate::controller;
 use crate::kingdom;
-use crate::observer;
 use crate::pile;
 use crate::pile::Pile;
 use num_traits::FromPrimitive;
