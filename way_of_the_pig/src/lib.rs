@@ -3,6 +3,7 @@ pub mod card;
 pub mod controller;
 pub mod event;
 pub mod game;
+pub mod game_state;
 pub mod kingdom;
 pub mod landmark;
 pub mod observer;

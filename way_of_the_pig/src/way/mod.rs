@@ -1,5 +1,5 @@
-use crate::game;
+use crate::game_state;
 
 trait Way {
-    fn play<G: game::GameState, const P: usize>(_g: &mut G);
+    fn play<G: game_state::GameState, const P: usize>(_g: &mut G);
 }

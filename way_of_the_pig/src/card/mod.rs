@@ -1,4 +1,4 @@
-use crate::game;
+use crate::game_state;
 use bitflags::bitflags;
 use num_derive::FromPrimitive;
 
@@ -80,7 +80,7 @@ bitflags! {
 pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
-    fn on_play<G: game::GameState, const P: usize>(_g: &mut G) {}
+    fn on_play<G: game_state::GameState, const P: usize>(_g: &mut G) {}
     #[inline]
     fn vp() -> u32 {
         0
