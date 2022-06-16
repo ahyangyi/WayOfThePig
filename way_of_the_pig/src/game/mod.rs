@@ -14,8 +14,8 @@ pub trait Game {
     type GameState: game_state::GameState;
     type Observer: observer::Observer;
 
-    fn get_game_state(&mut self) -> &mut GameState;
-    fn get_observer(&mut self) -> &mut Observer;
+    fn get_game_state(&mut self) -> &mut Self::GameState;
+    fn get_observer(&mut self) -> &mut Self::Observer;
 }
 
 pub struct GameImpl<'a, G: game_state::GameState> {
