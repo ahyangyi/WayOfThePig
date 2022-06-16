@@ -18,6 +18,6 @@ pub trait Game {
     fn get_observer(&mut self) -> &mut Self::Observer;
 }
 
-pub struct GameImpl<'a, G: game_state::GameState> {
+pub struct GameImpl<G: game_state::GameState> {
     pub game: G,
 }
