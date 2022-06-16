@@ -5,14 +5,14 @@ use crate::game;
 
 pub struct Controller {}
 
-fn total_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
+fn total_money<G: game::Game, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(card::CardType::Platinum) * 5
         + game.get_player::<P>().count_card(card::CardType::Gold) * 3
         + game.get_player::<P>().count_card(card::CardType::Silver) * 2
         + game.get_player::<P>().count_card(card::CardType::Copper)
 }
 
-fn num_money<G: game::GameState, const P: usize>(game: &mut G) -> u32 {
+fn num_money<G: game::Game, const P: usize>(game: &mut G) -> u32 {
     game.get_player::<P>().count_card(card::CardType::Platinum)
         + game.get_player::<P>().count_card(card::CardType::Gold)
         + game.get_player::<P>().count_card(card::CardType::Silver)
@@ -26,12 +26,12 @@ impl Controller {
 }
 
 impl controller::Controller for Controller {
-    fn act<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
+    fn act<G: game::Game, const P: usize>(&mut self, game: &mut G) {
         game.play_necropolis::<P>();
         game.play_patrol::<P>();
         game.play_patrol::<P>();
     }
-    fn buy<G: game::GameState, const P: usize>(&mut self, game: &mut G) {
+    fn buy<G: game::Game, const P: usize>(&mut self, game: &mut G) {
         while game.play_platinum::<P>() {}
         while game.play_gold::<P>() {}
         while game.play_silver::<P>() {}

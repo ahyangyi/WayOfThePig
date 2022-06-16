@@ -9,13 +9,13 @@ pub mod smithy;
 pub mod smithy_accidental_village;
 
 pub trait Controller {
-    fn act<G: game::GameState, const P: usize>(&mut self, _game: &mut G) {}
-    fn buy<G: game::GameState, const P: usize>(&mut self, _game: &mut G) {}
+    fn act<G: game::Game, const P: usize>(&mut self, _game: &mut G) {}
+    fn buy<G: game::Game, const P: usize>(&mut self, _game: &mut G) {}
     // FIXME None isn't even legal, but we don't have a sensible default currently
-    fn trash_for_upgrade<G: game::GameState, const P: usize>(&mut self, _game: &mut G) -> Option<CardType> {
+    fn trash_for_upgrade<G: game::Game, const P: usize>(&mut self, _game: &mut G) -> Option<CardType> {
         None
     }
-    fn discard_1<G: game::GameState, const P: usize>(&mut self, _game: &mut G) -> Option<CardType> {
+    fn discard_1<G: game::Game, const P: usize>(&mut self, _game: &mut G) -> Option<CardType> {
         None
     }
 }

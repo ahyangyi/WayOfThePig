@@ -15,7 +15,7 @@ impl card::Card for Card {
     }
 
     #[inline]
-    fn on_play<G: game::GameState, const P: usize>(g: &mut G) {
+    fn on_play<G: game::Game, const P: usize>(g: &mut G) {
         g.add_coin::<P>(5);
     }
 }

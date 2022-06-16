@@ -80,7 +80,7 @@ bitflags! {
 pub trait Card {
     fn static_price() -> u32;
     fn static_type() -> Type;
-    fn on_play<G: game::GameState, const P: usize>(_g: &mut G) {}
+    fn on_play<G: game::Game, const P: usize>(_g: &mut G) {}
     #[inline]
     fn vp() -> u32 {
         0
